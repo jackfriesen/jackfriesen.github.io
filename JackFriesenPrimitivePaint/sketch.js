@@ -5,12 +5,13 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-
+//create canvas
 function setup() {
   createCanvas(windowWidth, windowHeight);
   background(0);
 }
 
+//write name
 function draw() {
   textFont("Times New Roman");
   textSize(30);
@@ -18,6 +19,7 @@ function draw() {
   text("Jack Friesen", windowWidth-160, windowHeight-10);
 }
 
+//draw shapes via user input
 function keyTyped() {
   if(key==="a") {
     fill(random(255), random(255), random(255));
