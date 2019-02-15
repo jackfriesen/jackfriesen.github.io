@@ -10,12 +10,26 @@ const rectSize = 30;
 let x = 0;
 let y = 0;
 
+let count = 0;
+let countSpeed = -1;
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  background(0);
 }
 
 function draw() {
-  background(220);
+  if(count === 0){
+    fill(255, 0, 0);
+    countSpeed *= -1;
+  }
+  if(count === 180) {
+    fill(0, 255, 0);
+    countSpeed *= -1;
+  }
+
+  count += countSpeed;
+
   if(state === 0) { //on top, going right
     x += 5;
     if(x >= windowWidth - rectSize){
