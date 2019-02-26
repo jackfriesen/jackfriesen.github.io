@@ -39,12 +39,7 @@ function draw() {
   }
   ellipse(buttonX, buttonY, buttonSize, buttonSize);
 
-  //draw the fading rectangle 
-  
-  //rectShade = frameCount; 
-  // if(frameCount % 2 === 0) {
-  //   rectShade += 1;
-  // }
+  //make rect fade
   if(fadeIn) {
     rectShade -= 2;
   }
