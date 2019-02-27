@@ -46,7 +46,7 @@ function draw() {
   else {
     rectShade += 2;
   }
-  rectShade = constrain(rectShade, 0 , 225);
+  rectShade = constrain(rectShade, 0 , 255);
   
 
   fill(rectShade);
