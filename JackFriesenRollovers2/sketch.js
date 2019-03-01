@@ -31,7 +31,7 @@
 
 
 
-
+let go = true;  //halts draw loop for click functions
 
 let quadrant = 1; //top left=1 top right=2 bottom left=3 bottom right=4
 
@@ -67,49 +67,72 @@ function draw() {
 }
 
 function mousePressed() {
-  while (quadrant === 1) {
+  //when top left clicked turn all squares black
+  if (quadrant === 1) {
 
+
+    r1 = 0; //rgb values for quad 1
+    g1 = 0;
+    b1 = 0;
+
+    r2 = 0; //rgb values for quad 2
+    g2 = 0;
+    b2 = 0;
+
+    r3 = 0; //rgb values for quad 3
+    g3 = 0;
+    b3 = 0;
+
+    r4 = 0; //rgb values for quad 4
+    g4 = 0;
+    b4 = 0;
+
+    drawSquares();
+    go = false; //halt draw loop  
   }
 }
 
+//fade squares from yellow back to red after mouse rollover
 function fade() {
-  //fade quad 1
-  if (quadrant === 1) {
-    g1 = 255;
-  }
-  else {
-    if (g1 > 0) {
-      g1 -= 10;
+  if (go) {
+    //fade quad 1
+    if (quadrant === 1) {
+      g1 = 255;
     }
-  }
-
-  //fade quad 2
-  if (quadrant === 2) {
-    g2 = 255;
-  }
-  else {
-    if (g2 > 0) {
-      g2 -= 10;
+    else {
+      if (g1 > 0) {
+        g1 -= 7;
+      }
     }
-  }
 
-  //fade quad 3
-  if (quadrant === 3) {
-    g3 = 255;
-  }
-  else {
-    if (g3 > 0) {
-      g3 -= 10;
+    //fade quad 2
+    if (quadrant === 2) {
+      g2 = 255;
     }
-  }
+    else {
+      if (g2 > 0) {
+        g2 -= 7;
+      }
+    }
 
-  //fade quad 4
-  if (quadrant === 4) {
-    g4 = 255;
-  }
-  else {
-    if (g4 > 0) {
-      g4 -= 10;
+    //fade quad 3
+    if (quadrant === 3) {
+      g3 = 255;
+    }
+    else {
+      if (g3 > 0) {
+        g3 -= 7;
+      }
+    }
+
+    //fade quad 4
+    if (quadrant === 4) {
+      g4 = 255;
+    }
+    else {
+      if (g4 > 0) {
+        g4 -= 7;
+      }
     }
   }
 }
@@ -122,36 +145,44 @@ function rollOvers() {
     }
     else {
       quadrant = 3; //bottom left
+      r3 = 255;
+      go = true;
     }
   }
 
   if (mouseX > width / 2) {
     if (mouseY < height / 2) {
       quadrant = 2; //top right
+      r2 = 255;
+      go = true;
     }
     else {
-      quadrant = 4; //bottom right 
+      quadrant = 4; //bottom right
+      r4 = 255; 
+      go = true;
     }
   }
 }
 
 //draw squares and do starting colors
 function drawSquares() {
-  //quad 1
-  fill(r1, g1, b1);
-  rect(0, 0, width / 2, height / 2); //quad 1
+  if (go) {
+    //quad 1
+    fill(r1, g1, b1);
+    rect(0, 0, width / 2, height / 2); //quad 1
 
-  //quad 2
-  fill(r2, g2, b2);
-  rect(width / 2, 0, width / 2, height / 2); //quad 2
+    //quad 2
+    fill(r2, g2, b2);
+    rect(width / 2, 0, width / 2, height / 2); //quad 2
 
-  //quad 3
-  fill(r3, g3, b3);
-  rect(0, height / 2, width / 2, height / 2); //quad 3
+    //quad 3
+    fill(r3, g3, b3);
+    rect(0, height / 2, width / 2, height / 2); //quad 3
 
-  //quad 4
-  fill(r4, g4, b4);
-  rect(width / 2, height / 2, width / 2, height / 2); //quad 4
+    //quad 4
+    fill(r4, g4, b4);
+    rect(width / 2, height / 2, width / 2, height / 2); //quad 4
+  }
 }
 
 
