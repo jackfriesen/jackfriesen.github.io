@@ -19,6 +19,8 @@
 
 //TO DO
 //
+//bug fix for top left
+//
 //mousePressed function created and given appropriate tasks
 //
 //while quadrant = 1 have black squares then initialize fade
@@ -29,7 +31,7 @@
 
 
 
-
+let blackWhite = false;
 
 let go = true;  //halts draw loop for click functions
 
@@ -64,6 +66,7 @@ function draw() {
   drawSquares();
   rollOvers();
   fade();
+  //print(go, blackWhite, quadrant);
 }
 
 function mousePressed() {
@@ -90,6 +93,26 @@ function mousePressed() {
     drawSquares();
     go = false; //halt draw loop  
   }
+
+  //when bottom right clicked, alternate between black and white
+  if (quadrant === 4) {
+    if (blackWhite) {
+      r4 = 255;
+      g4 = 255;
+      b4 = 255;
+    }
+    if (blackWhite === false) {
+      r4 = 0;
+      g4 = 0;
+      b4 = 0;
+    }
+
+    blackWhite = !blackWhite;
+    go = false; //halt draw loop
+    print("hi");
+  }
+
+
 }
 
 //fade squares from yellow back to red after mouse rollover
@@ -103,6 +126,7 @@ function fade() {
       if (g1 > 0) {
         g1 -= 7;
       }
+      r1 = 255;
     }
 
     //fade quad 2
@@ -113,6 +137,7 @@ function fade() {
       if (g2 > 0) {
         g2 -= 7;
       }
+      r2 = 255;
     }
 
     //fade quad 3
@@ -123,6 +148,7 @@ function fade() {
       if (g3 > 0) {
         g3 -= 7;
       }
+      r3 = 255;
     }
 
     //fade quad 4
@@ -133,6 +159,8 @@ function fade() {
       if (g4 > 0) {
         g4 -= 7;
       }
+      r4 = 255;
+      b4 = 0;
     }
   }
 }
@@ -142,11 +170,13 @@ function rollOvers() {
   if (mouseX < width / 2) {
     if (mouseY < height / 2) {
       quadrant = 1; // top left
+
     }
     else {
       quadrant = 3; //bottom left
       r3 = 255;
       go = true;
+
     }
   }
 
@@ -155,11 +185,14 @@ function rollOvers() {
       quadrant = 2; //top right
       r2 = 255;
       go = true;
+      go2 = true;
     }
     else {
       quadrant = 4; //bottom right
-      r4 = 255; 
+      r4 = 255;
+
       go = true;
+
     }
   }
 }
