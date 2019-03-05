@@ -29,8 +29,6 @@
 
 
 
-
-
 let blackWhite = false;
 
 let go = true;  //halts draw loop for click functions
@@ -55,13 +53,13 @@ let b4 = 0;
 
 
 
-
+//create canvas
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
 }
 
-
+//run the whole proram with the exception of mouse click
 function draw() {
   drawSquares();
   rollOvers();
@@ -69,6 +67,7 @@ function draw() {
   //print(go, blackWhite, quadrant);
 }
 
+//run mouse click functions
 function mousePressed() {
   //when top left clicked turn all squares black
   if (quadrant === 1) {
@@ -94,8 +93,10 @@ function mousePressed() {
     go = false; //halt draw loop  
   }
 
-  //when bottom right clicked, alternate between black and white
+  //when bottom right clicked, supposed to alternate 
+  //between black and white
   if (quadrant === 4) {
+    go = true;
     if (blackWhite) {
       r4 = 255;
       g4 = 255;
@@ -108,8 +109,8 @@ function mousePressed() {
     }
 
     blackWhite = !blackWhite;
+    drawSquares();
     go = false; //halt draw loop
-    print("hi");
   }
 
 
@@ -170,13 +171,11 @@ function rollOvers() {
   if (mouseX < width / 2) {
     if (mouseY < height / 2) {
       quadrant = 1; // top left
-
     }
     else {
       quadrant = 3; //bottom left
       r3 = 255;
       go = true;
-
     }
   }
 
@@ -185,14 +184,11 @@ function rollOvers() {
       quadrant = 2; //top right
       r2 = 255;
       go = true;
-      go2 = true;
     }
     else {
       quadrant = 4; //bottom right
       r4 = 255;
-
-      go = true;
-
+      //go = true;
     }
   }
 }
@@ -217,5 +213,3 @@ function drawSquares() {
     rect(width / 2, height / 2, width / 2, height / 2); //quad 4
   }
 }
-
-
