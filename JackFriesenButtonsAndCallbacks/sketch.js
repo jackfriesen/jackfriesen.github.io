@@ -12,20 +12,27 @@ let sliderB;
 let radio;
 
 
-
 function setup() {
   createCanvas(windowWidth, windowHeight);
+
+  //create the sliders
   makeSliders();
+
+  //create radio buttons
   makeRadio();
+
+  //set initial shape to be a rectangle
+  radio.value("Rectangle");
 }
 
+//create sliders
 function makeSliders() {
   //makes slider for red fill value
   sliderR = createSlider(0, 255, 255);
   sliderR.position(0 + 100, height - 150);
 
   //makes slider for green fill value
-  sliderG = createSlider(0, 255, 142);
+  sliderG = createSlider(0, 255, 128);
   sliderG.position(0 + 100, height - 100);
 
   //makes slider for blue fill value
@@ -33,8 +40,8 @@ function makeSliders() {
   sliderB.position(0 + 100, height - 50);
 }
 
+//makes radio buttons for rectangle and ellipse
 function makeRadio() {
-  //makes radio buttons for rectangle and ellipse
   radio = createRadio();
   radio.position(width/2 - 80, 10);
   radio.option("Rectangle");
@@ -46,7 +53,7 @@ function draw() {
   drawShapes();
 }
 
-//create sliders and adjust numbers and background color
+//when slider used, adjust slider numbers and background color
 function sliders() {
   //update background color
   let r = sliderR.value();
@@ -72,5 +79,18 @@ function sliders() {
 
 //draws shapes based on radio button data
 function drawShapes() {
-  
+  //draw rectangle if rectangle radio button pressed
+  if(radio.value() === "Rectangle") {
+    rectMode(CENTER);
+    fill(0);
+    rect(width/2, height/2, 100, 100);
+  }
+
+  //draw ellipse if ellipse radio button pressed
+  if(radio.value() === "Ellipse") {
+    ellipseMode(CENTER);
+    fill(0);
+    ellipse(width/2, height/2, 100, 100);
+  }
 }
+
