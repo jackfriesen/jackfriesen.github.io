@@ -11,6 +11,9 @@
 //set square size as a variable that can also be 
 //included in the x for loop in makeSquares() so it only 
 //prints squares that far
+//
+//why can mousePressed() call draw but not run any code?
+//is it because draw is what changes the sketch?
 
 
 let change = false;
@@ -29,18 +32,27 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
-//draw squares for the first time
+//draw squares for the first time and change square size
 function draw() {
   makeSquares();
   if (change) {
-    //squares get smaller
+    //squares get smaller if they aren't too small already
     if (mouseButton === LEFT) {
-      squareSize -= 5;
+      if(squareSize < 15) {
+        squareSize = 15;
+      }
+      else {
+        squareSize -= 5;
+      }
     }
-    //squares get bigger
+    //squares get bigger if they aren't too big already
     if (mouseButton === RIGHT) {
-      //squares get bigger
-      squareSize += 5;
+      if(squareSize > 100){
+        squareSize = 100;
+      }
+      else {
+        squareSize += 5;
+      }
     }
   }
 
@@ -52,6 +64,7 @@ function keyPressed() {
   draw();
 }
 
+//change size when mouse pressed
 function mousePressed() {
   change = true;
   draw();
@@ -59,8 +72,8 @@ function mousePressed() {
 
 //make the squares on the screen
 function makeSquares() {
-  for (let x = 0; x <= width - squareSize; x += squareSize) {
-    for (let y = 0; y <= height - squareSize; y += squareSize) {
+  for (let x = 0; x < width - squareSize; x += squareSize) {
+    for (let y = 0; y < height - squareSize; y += squareSize) {
       fill(int(random(200, 255)), 0, int(random(100, 150)));
       rect(x, y, squareSize, squareSize);
     }
