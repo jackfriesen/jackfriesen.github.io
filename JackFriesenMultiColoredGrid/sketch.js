@@ -35,6 +35,11 @@ function windowResized() {
 //draw squares for the first time and change square size
 function draw() {
   makeSquares();
+  sizeChange();
+
+}
+
+function sizeChange() {
   if (change) {
     //squares get smaller if they aren't too small already
     if (mouseButton === LEFT) {
@@ -55,7 +60,6 @@ function draw() {
       }
     }
   }
-
 }
 
 //refresh canvas if key is pressed
@@ -72,9 +76,9 @@ function mousePressed() {
 
 //make the squares on the screen
 function makeSquares() {
-  for (let x = 0; x < width - squareSize; x += squareSize) {
-    for (let y = 0; y < height - squareSize; y += squareSize) {
-      fill(int(random(200, 255)), 0, int(random(100, 150)));
+  for (let x = 0; x < width; x += squareSize) {
+    for (let y = 0; y < height; y += squareSize) {
+      fill(int(random(255)), int(random(255)), int(random(255)));
       rect(x, y, squareSize, squareSize);
     }
   }
