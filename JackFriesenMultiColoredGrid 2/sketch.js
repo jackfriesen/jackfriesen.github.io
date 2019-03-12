@@ -1,24 +1,53 @@
-// Project Title
-// Your Name
+// Multi-Colored Grid
+// Jack Friesen
 // Date
 //
-// Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+//Create a grid of multi-colored squares that change 
+//size when mouse is pressed and change color when any key is pressed
 
 
 //TO DO 
 //
 //j is supposed to be halfway through the size array and squareSize uses j 
 //to browse the size array values and change square size based on that
+//
+//GET RID OF HARDCODE VALUE ADJUSTMENTS 
+//IN MOUSEPRESSED() AFTER J IS SOLVED
+
+
+//TABLE OF CONTENTS
+//
+// Setup()
+// * getSizes()
+//   -get the common factors between width and height as square sizes
+// 
+// windowResized()
+// -resize canvas if the window is resized
+//
+// Draw()
+// * makeSquares
+//   - print colored squares to the screen
+//
+// keyPressed()
+// - change square colors on screen
+// * makeSquares()
+//   - print colored squares to screen
+//
+// mousePressed()
+// - alter square size based on mouse button pressed
+// * makeSquares()
+//   - print colored squares to screen
+
 
 
 
 //let squareSize = sizeArray.indexOf(j);
 
+//this variable can go when j is solved
 let squareSize = 60;
 
 
-
+//supposed to 
 let sizeArray = [];
 let j = sizeArray.length / 2;
 
@@ -30,7 +59,10 @@ function setup() {
   noLoop();
 }
 
+//get the appropriate square size values by finding all common factors
+//between the width and the height
 function getSizes() {
+
   //if height is greater than width, count to height
   if (height > width) {
     for (let i = 0; i <= height; i++) {
@@ -69,17 +101,14 @@ function keyPressed() {
   makeSquares();
 }
 
-//change size when mouse pressed
+//adjust square size when mouse pressed and 
+//then print the newly sized squares
 function mousePressed() {
+
   //squares get smaller if they aren't too small already
   if (mouseButton === LEFT) {
+    //theoretically moves j to the next array value to adjust squareSize
     j -= 1;
-
-
-
-
-
-
 
     //THIS CAN GO WHEN YOU HAVE FIGURED OUT J
     if (squareSize < 15) {
@@ -88,22 +117,14 @@ function mousePressed() {
     else {
       squareSize -= 5;
     }
-
-
-
-
-
-
-
-
-
-
-
-
   }
+
   //squares get bigger if they aren't too big already
   if (mouseButton === RIGHT) {
+    //theoretically moves j to the next array value to adjust squareSize
     j += 1;
+
+    //THIS CAN GO WHEN YOU HAVE FIGURED OUT J
     if (squareSize > 800) {
       squareSize = 800;
     }
@@ -111,6 +132,7 @@ function mousePressed() {
       squareSize += 5;
     }
   }
+
   makeSquares();
 }
 
