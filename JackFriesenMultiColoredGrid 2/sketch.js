@@ -8,12 +8,14 @@
 
 //TO DO 
 //
-//j is supposed to be halfway through the size array and squareSize uses j to
-//browse the size array values and change square size based on that
+//j is supposed to be halfway through the size array and squareSize uses j 
+//to browse the size array values and change square size based on that
 
 
 
-let squareSize = sizeArray.indexOf(j);
+//let squareSize = sizeArray.indexOf(j);
+
+let squareSize = 60;
 
 
 
@@ -72,12 +74,32 @@ function mousePressed() {
   //squares get smaller if they aren't too small already
   if (mouseButton === LEFT) {
     j -= 1;
+
+
+
+
+
+
+
+    //THIS CAN GO WHEN YOU HAVE FIGURED OUT J
     if (squareSize < 15) {
       squareSize = 15;
     }
     else {
       squareSize -= 5;
     }
+
+
+
+
+
+
+
+
+
+
+
+
   }
   //squares get bigger if they aren't too big already
   if (mouseButton === RIGHT) {
