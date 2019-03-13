@@ -25,6 +25,4 @@ function draw() {
   //ellipse(x, y, 24, 24);
 
   ellipse(x, height /2, 24, 24);
-
-
 }
