@@ -2,9 +2,14 @@
 //
 //Generates random terrain using perlin noise;
 
+//TO DO
+//
+//USE COMMENTED OUT SECTIONS TO ADJUST FLAG POSITION
+
 let inc = 0.01;
 let start = 0;
 let rectWidth = 5;
+//let flagSpot = 0;
 
 
 function setup() {
@@ -16,6 +21,7 @@ function draw() {
   background(255);
   fill(0);
   generateTerrain();
+  drawFlag();
 }
 
 function generateTerrain() {
@@ -23,6 +29,10 @@ function generateTerrain() {
   for (let x = 0; x < width; x++) {
     let y = noise(xOff) * height;
     rect(x, y, rectWidth, height - y);
+    //  if( y > flagSpot) {
+    //    flagSpot = abs(y); //do i need abs????
+    //    print(flagSpot);
+    //  }
     xOff += inc;
   }
   start += inc;
@@ -34,6 +44,8 @@ function keyPressed() {
 }
 
 function drawFlag(x, y) {
+  //  let rectX = flagSpot;
+  //  let rectY = flagSpot + 20;
   let rectX = 20;
   let rectY = 20;
   fill(0);
