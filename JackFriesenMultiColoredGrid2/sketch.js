@@ -41,7 +41,7 @@
 
 
 
-//let squareSize = sizeArray.indexOf(j);
+//let squareSize;
 
 //this variable can go when j is solved
 let squareSize = 60;
@@ -138,6 +138,7 @@ function mousePressed() {
 
 //make the squares on the screen
 function makeSquares() {
+  //squareSize = sizeArray[j];
   for (let x = 0; x < width; x += squareSize) {
     for (let y = 0; y < height; y += squareSize) {
       fill(int(random(200, 255)), 0, int(random(100, 150)));
