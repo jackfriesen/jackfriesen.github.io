@@ -41,20 +41,16 @@
 
 
 
-//let squareSize;
-
-//this variable can go when j is solved
-let squareSize = 60;
-
-
-//supposed to 
+let squareSize;
 let sizeArray = [];
-let j = sizeArray.length / 2;
+let j; 
 
 function setup() {
   createCanvas(1000, 800);
 
   getSizes();
+
+  j =  sizeArray.length / 2;
 
   noLoop();
 }
