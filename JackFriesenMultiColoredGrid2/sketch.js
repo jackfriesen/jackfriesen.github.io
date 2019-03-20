@@ -43,14 +43,21 @@
 
 let squareSize;
 let sizeArray = [];
-let j; 
+let j;
 
 function setup() {
   createCanvas(1000, 800);
 
   getSizes();
 
-  j =  sizeArray.length / 2;
+  if (sizeArray.length % 2 === 0) {
+    j = sizeArray.length / 2;
+  }
+  else {
+    j = (sizeArray.length + 1) / 2;
+  }
+
+  squareSize = j;
 
   noLoop();
 }
@@ -64,7 +71,6 @@ function getSizes() {
     for (let i = 0; i <= height; i++) {
       if (height % i === 0 && width % i === 0) {
         sizeArray.push(i);
-        print(sizeArray);
       }
     }
   }
@@ -74,10 +80,10 @@ function getSizes() {
     for (let i = 0; i <= width; i++) {
       if (height % i === 0 && width % i === 0) {
         sizeArray.push(i);
-        print(sizeArray);
       }
     }
   }
+  print(sizeArray);
 }
 
 
@@ -89,6 +95,7 @@ function windowResized() {
 //draw squares for the first time and change square size
 function draw() {
   makeSquares();
+  print(j);
 }
 
 
@@ -106,13 +113,13 @@ function mousePressed() {
     //theoretically moves j to the next array value to adjust squareSize
     j -= 1;
 
-    //THIS CAN GO WHEN YOU HAVE FIGURED OUT J
-    if (squareSize < 15) {
-      squareSize = 15;
-    }
-    else {
-      squareSize -= 5;
-    }
+    // //THIS CAN GO WHEN YOU HAVE FIGURED OUT J
+    // if (squareSize < 15) {
+    //   squareSize = 15;
+    // }
+    // else {
+    //   squareSize -= 5;
+    // }
   }
 
   //squares get bigger if they aren't too big already
@@ -120,13 +127,13 @@ function mousePressed() {
     //theoretically moves j to the next array value to adjust squareSize
     j += 1;
 
-    //THIS CAN GO WHEN YOU HAVE FIGURED OUT J
-    if (squareSize > 800) {
-      squareSize = 800;
-    }
-    else {
-      squareSize += 5;
-    }
+    // //THIS CAN GO WHEN YOU HAVE FIGURED OUT J
+    // if (squareSize > 800) {
+    //   squareSize = 800;
+    // }
+    // else {
+    //   squareSize += 5;
+    // }
   }
 
   makeSquares();
