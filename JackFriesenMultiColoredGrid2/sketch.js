@@ -57,7 +57,7 @@ function setup() {
     j = (sizeArray.length + 1) / 2;
   }
 
-  squareSize = j;
+
 
   noLoop();
 }
@@ -95,7 +95,6 @@ function windowResized() {
 //draw squares for the first time and change square size
 function draw() {
   makeSquares();
-  print(j);
 }
 
 
@@ -110,30 +109,12 @@ function mousePressed() {
 
   //squares get smaller if they aren't too small already
   if (mouseButton === LEFT) {
-    //theoretically moves j to the next array value to adjust squareSize
     j -= 1;
-
-    // //THIS CAN GO WHEN YOU HAVE FIGURED OUT J
-    // if (squareSize < 15) {
-    //   squareSize = 15;
-    // }
-    // else {
-    //   squareSize -= 5;
-    // }
   }
 
   //squares get bigger if they aren't too big already
   if (mouseButton === RIGHT) {
-    //theoretically moves j to the next array value to adjust squareSize
     j += 1;
-
-    // //THIS CAN GO WHEN YOU HAVE FIGURED OUT J
-    // if (squareSize > 800) {
-    //   squareSize = 800;
-    // }
-    // else {
-    //   squareSize += 5;
-    // }
   }
 
   makeSquares();
@@ -141,6 +122,7 @@ function mousePressed() {
 
 //make the squares on the screen
 function makeSquares() {
+  squareSize = sizeArray[j];
   //squareSize = sizeArray[j];
   for (let x = 0; x < width; x += squareSize) {
     for (let y = 0; y < height; y += squareSize) {
