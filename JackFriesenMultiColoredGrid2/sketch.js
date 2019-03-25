@@ -5,16 +5,6 @@
 //Create a grid of multi-colored squares that change 
 //size when mouse is pressed and change color when any key is pressed
 
-
-//TO DO 
-//
-//j is supposed to be halfway through the size array and squareSize uses j 
-//to browse the size array values and change square size based on that
-//
-//GET RID OF HARDCODE VALUE ADJUSTMENTS 
-//IN MOUSEPRESSED() AFTER J IS SOLVED
-
-
 //TABLE OF CONTENTS
 //
 // Setup()
@@ -109,7 +99,9 @@ function mousePressed() {
 
   //squares get smaller if they aren't too small already
   if (mouseButton === LEFT) {
-    j -= 1;
+    if(j > 1 ){
+      j -= 1;
+    }
   }
 
   //squares get bigger if they aren't too big already

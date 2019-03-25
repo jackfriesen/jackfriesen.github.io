@@ -25,6 +25,14 @@ let leftCounter = 0;
 let upIndex = 12;
 let upCounter = 0;
 
+//vars for down states
+let downIndex = 16;
+let downCounter = 0;
+
+
+
+
+
 
 
 //load images
@@ -35,14 +43,21 @@ function preload() {
   }
   //load left states
   for (let j = 4; j < 8; j++) {
-    let img1 = loadImage("assets/Bowser_left" + j + ".png");
-    imgArray.push(img1);
+    imgArray.push(loadImage("assets/Bowser_left" + j + ".png"));
   }
   //load idle states
   for (let k = 8; k < 12; k++) {
-    let img2 = loadImage("assets/Bowser_idle" + k + ".png");
-    imgArray.push(img2);
+    imgArray.push(loadImage("assets/Bowser_idle" + k + ".png"));
   }
+  //load up states
+  for (let l = 12; l < 16; l++) {
+    imgArray.push(loadImage("assets/Bowser_up" + l + ".png"));
+  }
+  //load down states
+  for (let m = 16; m < 20; m++) {
+    imgArray.push(loadImage("assets/Bowser_down" + m + ".png"));
+  }
+
 }
 
 //create canvas
@@ -107,24 +122,37 @@ function keyPressed() {
 
 }
 
-// function up() {
-//   image(imgArray[upIndex], x, y);
+//cycle through up states
+function up() {
+  image(imgArray[upIndex], x, y);
 
-//   //change costume every 20 frames
-//   if (upCounter % 20 === 0) {
-//     upIndex++;
-//   }
+  //change costume every 20 frames
+  if (upCounter % 20 === 0) {
+    upIndex++;
+  }
 
-//   //loop back to start of up costumes
-//   if (upIndex > 11) {
-//     upIndex = 8;
-//   }
+  //loop back to start of up costumes
+  if (upIndex > 15) {
+    upIndex = 12;
+  }
 
-//   upCounter++;
-// }
+  upCounter++;
+}
 
 function down() {
+  image(imgArray[downIndex], x, y);
 
+  //change costume every 20 frames
+  if (downCounter % 20 === 0) {
+    downIndex++;
+  }
+
+  //loop back to start of idle costumes
+  if (downIndex > 19) {
+    downIndex = 16;
+  }
+
+  downCounter++;
 }
 
 //cycle through left states
