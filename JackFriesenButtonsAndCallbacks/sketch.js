@@ -81,16 +81,20 @@ function sliders() {
 function drawShapes() {
   //draw rectangle if rectangle radio button pressed
   if(radio.value() === "Rectangle") {
+    push();
     rectMode(CENTER);
-    fill(0);
+    fill(255, 0, 0);
     rect(width/2, height/2, 100, 100);
+    pop();
   }
 
   //draw ellipse if ellipse radio button pressed
   if(radio.value() === "Ellipse") {
+    push();
     ellipseMode(CENTER);
-    fill(0);
+    fill(50, 50, 200);
     ellipse(width/2, height/2, 100, 100);
+    pop();
   }
 }
 
