@@ -2,12 +2,6 @@
 //
 //Generates random terrain using perlin noise;
 
-//TO DO
-//
-//fix flagspot adjustment and redraw
-//
-//fix key pressed; how do I change the noise values to be different?
-
 let inc = 0.01;
 let start = 0;
 let rectWidth = 5;

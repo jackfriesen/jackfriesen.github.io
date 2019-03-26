@@ -69,7 +69,7 @@ function setup() {
 
 //animate bowser
 function draw() {
-  background(220);
+  background(220, 0, 100);
 
   //cycle through states
   if (state === 2) {

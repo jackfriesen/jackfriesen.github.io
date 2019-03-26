@@ -23,7 +23,7 @@ function setup() {
 function draw() {
   //background(0);
   fill(random(255), random(255), random(255));
-  ellipse(x, y, 25, 25);
+  ellipse(x, y, 30, 30);
   x += xSpeed;
   y += ySpeed;
 
@@ -36,11 +36,7 @@ function draw() {
 }
 
 function mousePressed(){
-  //fill(255, 0, 0);
   xSpeed = random(-3, 3);
   ySpeed = random(-3, 3);
 }
 
-function mouseReleased(){
-  //fill(0, 255, 0);
-}
