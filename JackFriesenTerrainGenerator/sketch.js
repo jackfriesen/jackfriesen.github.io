@@ -2,32 +2,46 @@
 //
 //Generates random terrain using perlin noise;
 
-
+let inc = 0.01;
+let start = 0;
+let rectWidth = 5;
+let flagSpotX;
+let flagSpotY;
 
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  //noLoop();
+}
+
+function draw() {
+  background(255);
+  fill(0);
   generateTerrain();
   drawFlag();
 }
 
-function draw() {
-
-}
-
 function generateTerrain() {
-  let yOff = 0;
-  let x = 0;
-  for (let i = 0; i <= width; i++) {
-    let y = map(noise(yOff), 0, 1, 0, height);
+  let xOff = start;
+  flagSpotY = height;
+  flagSpotX = 0;
 
-    yOff += 0.001;
+  for (let x = 0; x < width; x++) {
+    let y = noise(xOff) * height;
 
-    fill(0);
-    rect(x, y, 2, height - y);
+    let rectHeight = height - y; 
 
-    x += 1;
+    rect(x, y, rectWidth, rectHeight);
+
+    if (y < flagSpotY) {
+      flagSpotY = y; 
+      flagSpotX = x;
+    }
+
+    xOff += inc;
   }
+
+  start += inc;
 }
 
 function keyPressed() {
@@ -35,10 +49,10 @@ function keyPressed() {
   generateTerrain();
 }
 
-function drawFlag(x, y) {
-  let rectX = 20;
-  let rectY = 20;
+function drawFlag() {
+  let rectX = flagSpotX;
+  let rectY = flagSpotY - 20;
   fill(0);
   rect(rectX, rectY, 1, 20);
-  triangle(rectX + 1, rectY + 1, rectX, rectY - 5, rectX + 12, rectY - 5/2);
+  triangle(rectX + 1, rectY + 1, rectX, rectY - 8, rectX + 12, rectY - 5 / 2);
 }

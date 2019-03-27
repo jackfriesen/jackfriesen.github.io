@@ -1,31 +1,81 @@
-// Project Title
-// Your Name
+// Multi-Colored Grid
+// Jack Friesen
 // Date
 //
-// Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+//Create a grid of multi-colored squares that change 
+//size when mouse is pressed and change color when any key is pressed
 
-
-//TO DO 
+//TABLE OF CONTENTS
 //
-//set square size as a variable that can also be 
-//included in the x for loop in makeSquares() so it only 
-//prints squares that far
+// Setup()
+// * getSizes()
+//   -get the common factors between width and height as square sizes
+// 
+// windowResized()
+// -resize canvas if the window is resized
 //
-//why can mousePressed() call draw but not run any code?
-//is it because draw is what changes the sketch?
+// Draw()
+// * makeSquares
+//   - print colored squares to the screen
+//
+// keyPressed()
+// - change square colors on screen
+// * makeSquares()
+//   - print colored squares to screen
+//
+// mousePressed()
+// - alter square size based on mouse button pressed
+// * makeSquares()
+//   - print colored squares to screen
 
 
-let change = false;
+
+
 let squareSize;
+let sizeArray = [];
+let j;
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(1000, 800);
 
-  squareSize = 50;
+  getSizes();
+
+  if (sizeArray.length % 2 === 0) {
+    j = sizeArray.length / 2;
+  }
+  else {
+    j = (sizeArray.length + 1) / 2;
+  }
+
+
 
   noLoop();
 }
+
+//get the appropriate square size values by finding all common factors
+//between the width and the height
+function getSizes() {
+
+  //if height is greater than width, count to height
+  if (height > width) {
+    for (let i = 0; i <= height; i++) {
+      if (height % i === 0 && width % i === 0) {
+        sizeArray.push(i);
+      }
+    }
+  }
+
+  //if width is greater than height, count to width
+  if (height < width) {
+    for (let i = 0; i <= width; i++) {
+      if (height % i === 0 && width % i === 0) {
+        sizeArray.push(i);
+      }
+    }
+  }
+  print(sizeArray);
+}
+
 
 //resize sketch when canvas resized
 function windowResized() {
@@ -35,50 +85,40 @@ function windowResized() {
 //draw squares for the first time and change square size
 function draw() {
   makeSquares();
-  sizeChange();
-
 }
 
-function sizeChange() {
-  if (change) {
-    //squares get smaller if they aren't too small already
-    if (mouseButton === LEFT) {
-      if(squareSize < 15) {
-        squareSize = 15;
-      }
-      else {
-        squareSize -= 5;
-      }
-    }
-    //squares get bigger if they aren't too big already
-    if (mouseButton === RIGHT) {
-      if(squareSize > 100){
-        squareSize = 100;
-      }
-      else {
-        squareSize += 5;
-      }
-    }
-  }
-}
 
 //refresh canvas if key is pressed
 function keyPressed() {
-  change = false;
-  draw();
+  makeSquares();
 }
 
-//change size when mouse pressed
+//adjust square size when mouse pressed and 
+//then print the newly sized squares
 function mousePressed() {
-  change = true;
-  draw();
+
+  //squares get smaller if they aren't too small already
+  if (mouseButton === LEFT) {
+    if(j > 1 ){
+      j -= 1;
+    }
+  }
+
+  //squares get bigger if they aren't too big already
+  if (mouseButton === RIGHT) {
+    j += 1;
+  }
+
+  makeSquares();
 }
 
 //make the squares on the screen
 function makeSquares() {
+  squareSize = sizeArray[j];
+  //squareSize = sizeArray[j];
   for (let x = 0; x < width; x += squareSize) {
     for (let y = 0; y < height; y += squareSize) {
-      fill(int(random(255)), int(random(255)), int(random(255)));
+      fill(int(random(200, 255)), 0, int(random(100, 150)));
       rect(x, y, squareSize, squareSize);
     }
   }
