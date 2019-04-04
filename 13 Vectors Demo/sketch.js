@@ -52,7 +52,7 @@ function other() {
 }
 
 class Mover {
-  //Constructor anbd Properties
+  //Constructor and Properties
   constructor(x_, y_) {
     this.size = 1;
     this.position = createVector(x_, y_);
