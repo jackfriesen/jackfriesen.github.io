@@ -3,6 +3,7 @@
 let walkers = [];
 let pause = true;
 const NUM_WALKERS = 400;
+let myWalker;
 function setup() {
   createCanvas(windowWidth, windowHeight);
 

@@ -40,7 +40,6 @@ function generateTerrain() {
 
     xOff += inc;
   }
-
   start += inc;
 }
 
