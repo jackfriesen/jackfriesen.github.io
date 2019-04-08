@@ -17,7 +17,7 @@ function preload() {
     birdImages.push(loadImage("assets/Bird" + i + ".png"));
   }
 
-  //load pipes
+  // //load pipes
   // for(let j = 1; j < 6; j++) {
   //   pipeImages.push(loadImage("assets/pipes" + j + ".png"));
   // }
@@ -34,7 +34,7 @@ function draw() {
   bird.update();
   bird.display();
 
-  if(frameCount % 40 === 0) {
+  if (frameCount % 40 === 0) {
     pipeImages.push(new Pipe());
   }
 
@@ -89,7 +89,7 @@ class Bird {
 
   update() {
     this.velocity += this.gravity;
-    this.velocity *= 0.9;
+  //   this.velocity *= 0.9;
     this.y += this.velocity;
 
     if (this.y > height) {
