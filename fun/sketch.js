@@ -7,14 +7,25 @@ function setup() {
 }
 
 function draw() {
-  background(60, 60, 60);
-  fill(255, 0, 0);
+  drawFrameOne();
+  drawFrameTwo();
+}
+
+function drawFrameOne() {
+
+  push();
+  strokeWeight(5);
+  rect(5, 5, width / 2 - 10, height / 2 - 10);
+  pop();
+
   
-  
-  translate(width / 2, height / 2);
-  
-  rotate(radians(45));
-  rect(0, 0, 25, 25);
-  
+}
+
+function drawFrameTwo() {
+  push();
+  strokeWeight(3);
+  translate(width / 2, 5);
+  rect(0, 0, width /4, height/ 4);
+  pop();
 
 }
