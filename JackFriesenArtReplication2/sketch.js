@@ -18,47 +18,9 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-//TO DO
+//to do
 //
-//find random range for xPos, yPos, and control point values
-//(find good values for bezier three first!!)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//randoms found for second and third beziers
 
 
 
@@ -117,16 +79,16 @@ function setup() {
 
 function setFirstBezier() {
   //set end points for bezier
-  b1X1 = width / 2 - 375;
-  b1Y1 = height / 2 - 300;
-  b1X2 = width / 2 - 150;
-  b1Y2 = height / 2 - 300;
+  b1X1 = width / 2 - random(360, 380);
+  b1Y1 = height / 2 - random(290, 310);
+  b1X2 = width / 2 - random(140, 160);
+  b1Y2 = height / 2 - random(290, 310);
 
   //set control magnets for bezier
-  b1ControlX1 = b1X1 + 40;
-  b1ControlY1 = sin(120);
-  b1ControlX2 = b1X2 - 100;
-  b1ControlY2 = b1Y2 + 100;
+  b1ControlX1 = b1X1 + random(30, 50);
+  b1ControlY1 = random(-10, 10);
+  b1ControlX2 = b1X2 - random(90, 110);
+  b1ControlY2 = b1Y2 + random(90, 100);
 }
 
 function setSecondBezier () {
