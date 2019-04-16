@@ -23,7 +23,9 @@ function draw() {
 }
 
 function mouseClicked() {
+  for(let x = 0; x < 50; x ++) {
   ballObjects.push(new Ball(mouseX, mouseY));
+  }
 }
 
 class Ball {
@@ -39,8 +41,8 @@ class Ball {
 
   //Class Methods
   display() {
-    rectMode(CENTER);
-    rect(this.x, this.y, this.size, this.size);
+    ellipseMode(CENTER);
+    ellipse(this.x, this.y, this.size, this.size);
   }
 
   move() {
