@@ -20,6 +20,8 @@ function draw() {
   if(count < 0 || count > 280) {
     countSpeed *= -1;
   }
+
+  
 }
 
 function mouseClicked() {
