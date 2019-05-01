@@ -27,8 +27,8 @@ function setup() {
   createCanvas(4500, 3000);
   ellipseMode(CENTER);
   noLoop();
-  circSize = random(60, 100)
-  strokeWeight(5);
+  circSize = random(80, 120);
+  strokeWeight(25);
 }
 
 function draw() {
@@ -48,22 +48,22 @@ function drawCircles() {
   for (let x = 30; x < width; x += circSize + random(45, 55)) {
     y1 = 20;
     for (let y = 20; y < height - circSize; y += circSize + 15) {
-      circSize = random(60, 100);
+      circSize = random(80, 120);
       y2 = y1 + circSize + 20;
-      fill(random(245), random(90), 45)
+      fill(random(255), random(100), 55);
       if(y2 < height - 40) {
-        push();
-        stroke(125);
-        strokeWeight(10)
-        line(x, y1, x, y2);
-        print(y2, "y1");
-        pop();
+        // push();
+        // stroke(125);
+        // strokeWeight(10);
+        // line(x, y1, x, y2);
+        // print(y2, "y1");
+        // pop();
         ellipse(x, y1, circSize, circSize);
         y1 = y2;
       }
     }
-    circSize = random(60, 100);
-    fill(random(245), random(90), 45)
+    circSize = random(80, 120);
+    fill(random(245), random(90), 45);
     ellipse(x, y1, circSize, circSize);
   } 
 }
