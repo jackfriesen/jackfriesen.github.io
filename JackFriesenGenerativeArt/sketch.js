@@ -7,21 +7,14 @@
 //zoom out of browser window if you can't see full image
 //bc canvas is too big
 
-//TO DO
-//
-//CHOOSE A FILL
-//
-//fix line y2
-//
-//fix save() function
-
 let circSize;
-let circlesArray = [];
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(4500, 3000);
+  ellipseMode(CENTER);
   noLoop();
-  circSize = random(60, 80);
+  circSize = random(80, 120);
+  strokeWeight(25);
 }
 
 function draw() {
@@ -30,36 +23,33 @@ function draw() {
 }
 
 function keyPressed() {
-  if (keyCode === " ") {
+  if(key === " ") {
     save();
-  } 
-}
-
-function sumArray() {
-  let sum = 0;
-  for(let i = 0; i < circlesArray.length; i ++) {
-    sum += circlesArray[i];
   }
-  print(sum);
-  return sum;
 }
 
 function drawCircles() {
-  let i =0;
-  for(let x = 40; x < width; x += circSize + 5) {
-    for(let y = 20; y < height - circSize; y += circSize) {
-      circlesArray.push(circSize);
-      circSize = random(20, 60);
+  let y1; //needs to be first circ size
+  let y2 = 0; //needs to be second circ size
+  for (let x = 30; x < width; x += circSize + random(45, 55)) {
+    y1 = 20;
+    for (let y = 20; y < height - circSize; y += circSize + 15) {
+      circSize = random(80, 120);
+      y2 = y1 + circSize + 20;
+      fill(random(255), random(100), 55);
+      if(y2 < height - 40) {
+        push();
+        stroke(125);
+        strokeWeight(10);
+        line(x, y1, x, y2);
+        print(y2, "y1");
+        pop();
+        ellipse(x, y1, circSize, circSize);
+        y1 = y2;
+      }
     }
-    push();
-    stroke(125);
-    strokeWeight(3);
-    line(x, 0, x, sumArray());
-    pop();
-    for(let y = 20; y < height - circlesArray[i]; y += circlesArray[i]) {
-      fill(random(245), random(90), 45);
-      ellipse(x, y, circlesArray[i], circlesArray[i]);
-      i++;
-    }
-  }
+    circSize = random(80, 120);
+    fill(random(245), random(90), 45);
+    ellipse(x, y1, circSize, circSize);
+  } 
 }
