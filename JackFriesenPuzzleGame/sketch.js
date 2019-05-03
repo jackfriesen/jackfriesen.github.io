@@ -1,8 +1,10 @@
-//puzzle demo and 2D arrays
+//puzzle game
 
 const NUM_ROWS = 4;
 const NUM_COLS = 5;
 let rectWidth, rectHeight;
+
+let squareCross = true;
 
 let currentRow, currentCol;
 
@@ -11,6 +13,7 @@ let gridData = [[0, 255, 0, 255, 0],
                 [0, 255, 0, 255, 0],
                 [255, 0, 255, 0, 255]];
 
+//create canvas and randomize grid board
 function setup() {
   createCanvas(windowWidth, windowHeight);
   rectWidth = width / NUM_COLS;
@@ -94,6 +97,26 @@ function determineActiveSquare() {
   currentRow = int(mouseY / rectHeight);
   currentCol = int(mouseX / rectWidth);
   //print(currentCol, currentRow);
+
+  //show cross formation of squares about to be impacted
+  if (squareCross) {
+    fill(139, 69, 19, 50);
+    rect(rectWidth * currentCol, rectHeight * currentRow, rectWidth, rectHeight);
+    fill(182, 251, 182, 50);
+    rect(rectWidth * (currentCol - 1), rectHeight * currentRow, rectWidth, rectHeight);
+    rect(rectWidth * (currentCol + 1), rectHeight * currentRow, rectWidth, rectHeight);
+    rect(rectWidth * currentCol, rectHeight * (currentRow - 1), rectWidth, rectHeight);
+    rect(rectWidth * currentCol, rectHeight * (currentRow + 1), rectWidth, rectHeight);
+  }
+  else { //same thing but square formation
+    fill(139, 69, 19, 50);
+    rect(rectWidth * currentCol, rectHeight * currentRow, rectWidth, rectHeight);
+    fill(182, 251, 182, 50);
+    rect(rectWidth * (currentCol - 1), rectHeight * currentRow, rectWidth, rectHeight);
+    rect(rectWidth * currentCol, rectHeight * (currentRow - 1), rectWidth, rectHeight);
+    rect(rectWidth * (currentCol - 1), rectHeight * (currentRow - 1), rectWidth, rectHeight);
+  }
+
 }
 
 //change square color
@@ -111,15 +134,37 @@ function flip(col, row) {
 //press left to change squares
 //press middle for cheater cheater (single square change)
 function mousePressed() {
-  if (mouseButton === LEFT) {
-    flip(currentCol, currentRow);
-    flip(currentCol - 1, currentRow);
-    flip(currentCol + 1, currentRow);
-    flip(currentCol, currentRow - 1);
-    flip(currentCol, currentRow + 1);
+  if (squareCross) {
+    if (mouseButton === LEFT) {
+      flip(currentCol, currentRow);
+      flip(currentCol - 1, currentRow);
+      flip(currentCol + 1, currentRow);
+      flip(currentCol, currentRow - 1);
+      flip(currentCol, currentRow + 1);
+    }
   }
+  else {
+    if (mouseButton === LEFT) {
+      flip(currentCol, currentRow);
+      flip(currentCol - 1, currentRow);
+      flip(currentCol, currentRow - 1);
+      flip(currentCol - 1, currentRow - 1);
+    }
+  } 
+
+
 
   if (mouseButton === CENTER) {
     flip(currentCol, currentRow);
+  }
+
+
+}
+
+//flip between cross and square formation
+function keyPressed() {
+  if (key === " ") {
+    squareCross = !squareCross;
+    print(squareCross);
   }
 }
