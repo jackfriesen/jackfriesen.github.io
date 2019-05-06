@@ -152,8 +152,6 @@ function mousePressed() {
     }
   } 
 
-
-
   if (mouseButton === CENTER) {
     flip(currentCol, currentRow);
   }
