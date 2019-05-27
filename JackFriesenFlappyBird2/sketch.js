@@ -10,6 +10,7 @@ let birdImages = [];
 let birdCounter = 0;
 let pipeImages = [];
 let pipes = [];
+let pipesCounter = 0;
 
 
 //load images
@@ -116,15 +117,16 @@ class Pipe {
     this.top = random(height / 2);
     this.bottom = random(height / 2);
     this.x = width;
-    this.w = 20;
+    this.w = random(90, 120);
     this.speed = 5;
   }
 
   //Class Methods
   show() {
     fill(255);
-    rect(this.x, 0, this.w, this.top);
-    rect(this.x, height - this.bottom, this.w, this.bottom);
+    // rect(this.x, 0, this.w, this.top);
+    // rect(this.x, height - this.bottom, this.w, this.bottom);
+    image(pipes[pipesCounter],this.x, height - this.bottom, this.w, this.bottom);
   }
 
   update() {

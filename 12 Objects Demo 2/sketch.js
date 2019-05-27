@@ -10,23 +10,23 @@ function setup() {
 function draw() {
   background(0);
   fill(random(255), random(255), random(255), count);
-  for(let currentBall of ballObjects) {
+  for (let currentBall of ballObjects) {
     currentBall.mouseOver();
     currentBall.display();
     currentBall.move();
   }
   count += countSpeed;
 
-  if(count < 0 || count > 280) {
+  if (count < 0 || count > 280) {
     countSpeed *= -1;
   }
 
-  
+
 }
 
 function mouseClicked() {
-  for(let x = 0; x < 50; x ++) {
-  ballObjects.push(new Ball(mouseX, mouseY));
+  for (let x = 0; x < 50; x++) {
+    ballObjects.push(new Ball(mouseX, mouseY));
   }
 }
 
@@ -53,10 +53,10 @@ class Ball {
     this.ySpeed += this.gravity;
 
     //check L/R balls
-    if(this.x < 0 || this.x > width) {
+    if (this.x < 0 || this.x > width) {
       this.xSpeed *= -1;
     }
-    if(this.y > height) {
+    if (this.y > height) {
       this.ySpeed *= -0.92;
       this.y = height;
     }
@@ -64,11 +64,11 @@ class Ball {
 
   mouseOver() {
     let d = dist(this.x, this.y, mouseX, mouseY);
-    if(d < this.size / 2) {
-      if(mouseIsPressed && mouseButton === CENTER) {
+    if (d < this.size / 2) {
+      if (mouseIsPressed && mouseButton === CENTER) {
         this.size += 20;
       }
-      if(mouseIsPressed && mouseButton === RIGHT) {
+      if (mouseIsPressed && mouseButton === RIGHT) {
         this.size -= 20;
       }
     }
