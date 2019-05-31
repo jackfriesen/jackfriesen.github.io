@@ -33,6 +33,8 @@
 
 
 //WATCH JUMP VID
+//WHY DOESNT COLLIDE FUNCTION WORK - why are plat w and h undefined? is it because they are objects and not images????
+//stop level one from looping and pushing more platforms in
 
 
 
@@ -97,6 +99,9 @@ let platformImg = [];
 let platforms = [];
 let hit = false;
 let imgArray = [];
+let platformX = [];
+let platformY = [];
+let platX, platY;
 
 
 function preload() {
@@ -128,7 +133,23 @@ function preload() {
 function setup() {
   createCanvas(1600, 789);
   x = width / 2;
-  y = height / 2;
+  y = height - 60;
+
+   platX = 0;
+   platY = height - 15;
+
+   loadLevelOne();
+   print(platforms);
+}
+
+function loadLevelOne () {
+  for (let i = 0; i < 9; i++) {
+    platforms.push(new HorizontalPlatform(platX, platY));
+    platformX.push(platX);
+    platformY.push(platY);
+    platX += 180;
+  }
+  platforms.push(new VerticalPlatform(width - 15, height - 150)); //wall
 }
 
 function draw() {
@@ -139,26 +160,38 @@ function draw() {
   //create level one
   levelOne();
 
-  //Hero Animation
+  //for Hero Animation
   stateCycle();
+
+  //collide();
+
+  rect(0, 0, 25, 25);
 
 }
 
+function collide() {
+  for (let i = 0; i < platforms.length; i++) {
+    platW = platforms[i].width;
+    platH = platforms[i].height;
+
+    print(platW, platH);
+    print(platforms);
+
+    hit = collideRectRect(x, y, 55, 58, platformX[i], platformY[i], platW, platH);
+  }
+}
+
 function levelOne() {
-  let platX = 0;
-  let platY = height - 15;
+  
 
   //bottom floor
-  for (let i = 0; i < 9; i++) {
-    platforms.push(new HorizontalPlatform(platX, platY));
-    platX += 180;
-  }
+  
   for (let i = 0; i < 9; i++) {
     platforms[i].display();
   }
 
   //second floor and walls
-  platforms.push(new VerticalPlatform(width - 15, height - 150)); //wall
+
   platforms[9].display();
   //for(data to create second floor) {
   //
@@ -171,6 +204,8 @@ function keyReleased() {
 }
 
 function keyPressed() {
+  print(platformX, platformY);
+  //print(hit, platformX, platformY);
   //go right
   if (keyCode === RIGHT_ARROW) {
     state = 1;
