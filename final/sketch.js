@@ -164,9 +164,6 @@ function draw() {
   stateCycle();
 
   //collide();
-
-  rect(0, 0, 25, 25);
-
 }
 
 function collide() {
