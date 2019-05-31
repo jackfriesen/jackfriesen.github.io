@@ -3,95 +3,7 @@
 //game is meant to be played on devices with a resolution of 1600 x 789 or higher
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //WATCH JUMP VID
-//WHY DOESNT COLLIDE FUNCTION WORK - why are plat w and h undefined? is it because they are objects and not images????
-//stop level one from looping and pushing more platforms in
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//collision function can constantly loop through platforms array
-//platW = platforms[i].width;
-//platH = platforms[i].height;
-
-
-//collisionRectRect(x, y, 55, 58, platX, platY, platW, platH);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //universal vars
@@ -101,7 +13,9 @@ let hit = false;
 let imgArray = [];
 let platformX = [];
 let platformY = [];
-let platX, platY;
+let platX, platY, platW, platH;
+
+let count = 0;
 
 
 function preload() {
@@ -132,30 +46,38 @@ function preload() {
 
 function setup() {
   createCanvas(1600, 789);
-  x = width / 2;
-  y = height - 60;
-
-   platX = 0;
-   platY = height - 15;
-
-   loadLevelOne();
-   print(platforms);
+  
+  
+  loadLevelOne();
 }
 
-function loadLevelOne () {
+function loadLevelOne() {
+  //intialize hero location
+  x = 3;
+  y = height - 62;
+
+  //load bottom floor
+  platX = 0;
+  platY = height - 15;
+  
   for (let i = 0; i < 9; i++) {
     platforms.push(new HorizontalPlatform(platX, platY));
     platformX.push(platX);
     platformY.push(platY);
     platX += 180;
   }
-  platforms.push(new VerticalPlatform(width - 15, height - 150)); //wall
+  //load right wall
+  platX = width - 15;
+  platY = height - 150;
+  platforms.push(new VerticalPlatform(platX, platY)); //wall
+  platformX.push(platX);
+  platformY.push(platY);
 }
 
 function draw() {
   background(0);
-  //hit = collideRectRect(0, height -15, 180, 15, x, y, 55, 58);
-  //print(hit);
+  // hit = collideRectRect(0, height -15, 180, 15, x, y, 55, 58);
+  // print(hit);
 
   //create level one
   levelOne();
@@ -163,37 +85,38 @@ function draw() {
   //for Hero Animation
   stateCycle();
 
-  //collide();
+  //check for collisions
+  collide();
 }
 
 function collide() {
   for (let i = 0; i < platforms.length; i++) {
-    platW = platforms[i].width;
-    platH = platforms[i].height;
+    platW = platforms[i].getWidth();
+    platH = platforms[i].getHeight();
 
-    print(platW, platH);
-    print(platforms);
+    //print(platW, platH);
+    //print(platformX, platformY);
 
     hit = collideRectRect(x, y, 55, 58, platformX[i], platformY[i], platW, platH);
+    if (hit) {
+      print(hit, count);
+    }
+    count++;
+
   }
 }
 
 function levelOne() {
-  
-
   //bottom floor
-  
   for (let i = 0; i < 9; i++) {
     platforms[i].display();
   }
 
   //second floor and walls
-
   platforms[9].display();
   //for(data to create second floor) {
   //
   //}
-
 }
 
 function keyReleased() {
@@ -201,8 +124,6 @@ function keyReleased() {
 }
 
 function keyPressed() {
-  print(platformX, platformY);
-  //print(hit, platformX, platformY);
   //go right
   if (keyCode === RIGHT_ARROW) {
     state = 1;
@@ -222,73 +143,14 @@ function keyPressed() {
   if (keyCode === UP_ARROW) {
     state = 3;
   }
-
-
 }
 
 
 
 
 
-
-
-
-
-//CLASSES//
-//**************************************************************************************************************************************************************************//
-
-class Hero {
-
-}
-
-class HorizontalPlatform {
-  //Constructor and Class Properties
-  constructor(x_, y_) {
-    this.x = x_;
-    this.y = y_;
-    this.w = platformImg[0].width;
-    this.h = platformImg[0].height;
-  }
-
-  //Class Methods
-  display() {
-    image(platformImg[0], this.x, this.y);
-  }
-}
-
-class VerticalPlatform {
-  //Constructor and Class Properties
-  constructor(x_, y_) {
-    this.x = x_;
-    this.y = y_;
-    this.w = platformImg[1].width;
-    this.h = platformImg[1].height;
-  }
-
-  //Class Methods
-  display() {
-    image(platformImg[1], this.x, this.y);
-  }
-}
-
-
-
-
-
+//CHARACTERS//
 //************************************************************************************************************************************************************************//
-
-
-
-
-
-
-
-
-//USELESS//
-//************************************************************************************************************************************************************************//
-
-
-
 
 
 
@@ -427,5 +289,67 @@ function stateCycle() {
     y += 2;
   }
 }
-//***************//
-//***************//
+
+//*************************************************************************************************************************************************************************//
+
+
+
+
+
+
+
+
+//CLASSES//
+//**************************************************************************************************************************************************************************//
+
+class Hero {
+
+}
+
+class HorizontalPlatform {
+  //Constructor and Class Properties
+  constructor(x_, y_) {
+    this.x = x_;
+    this.y = y_;
+    this.w = platformImg[0].width;
+    this.h = platformImg[0].height;
+  }
+
+  //Class Methods
+  display() {
+    image(platformImg[0], this.x, this.y);
+  }
+
+  getWidth() {
+    return this.w;
+  }
+
+  getHeight() {
+    return this.h;
+  }
+}
+
+class VerticalPlatform {
+  //Constructor and Class Properties
+  constructor(x_, y_) {
+    this.x = x_;
+    this.y = y_;
+    this.w = platformImg[1].width;
+    this.h = platformImg[1].height;
+  }
+
+  //Class Methods
+  display() {
+    image(platformImg[1], this.x, this.y);
+  }
+
+  getWidth() {
+    return this.w;
+  }
+
+  getHeight() {
+    return this.h;
+  }
+}
+
+//************************************************************************************************************************************************************************//
