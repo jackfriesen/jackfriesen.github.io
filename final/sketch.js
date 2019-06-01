@@ -2,8 +2,45 @@
 //puzzle/platformer
 //game is meant to be played on devices with a resolution of 1600 x 789 or higher
 
+//new laptop resolution is 981x754
 
-//WATCH JUMP VID
+
+
+
+
+
+
+
+//COMBINE BOWSER AND RECTANGLE ANIMATIONS 
+//-use rectangle animation but use bowsers state cycle so that states are changed and functions are 
+//called in keyPressed rather than calling code when the key is pressed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //universal vars
@@ -46,8 +83,6 @@ function preload() {
 
 function setup() {
   createCanvas(1600, 789);
-  
-  
   loadLevelOne();
 }
 
@@ -94,15 +129,11 @@ function collide() {
     platW = platforms[i].getWidth();
     platH = platforms[i].getHeight();
 
-    //print(platW, platH);
-    //print(platformX, platformY);
-
     hit = collideRectRect(x, y, 55, 58, platformX[i], platformY[i], platW, platH);
     if (hit) {
-      print(hit, count);
+      //print(hit, count);
     }
     count++;
-
   }
 }
 
@@ -195,7 +226,6 @@ function up() {
   if (upIndex > 15) {
     upIndex = 12;
   }
-
   upCounter++;
 }
 
@@ -212,7 +242,6 @@ function down() {
   if (downIndex > 19) {
     downIndex = 16;
   }
-
   downCounter++;
 }
 
@@ -229,7 +258,6 @@ function left() {
   if (leftIndex > 7) {
     leftIndex = 4;
   }
-
   leftCounter++;
 }
 
@@ -246,7 +274,6 @@ function right() {
   if (rightIndex > 3) {
     rightIndex = 0;
   }
-
   rightCounter++;
 }
 
@@ -263,7 +290,6 @@ function idle() {
   if (idleIndex > 11) {
     idleIndex = 8;
   }
-
   idleCounter++;
 }
 

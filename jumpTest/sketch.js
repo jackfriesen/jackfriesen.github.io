@@ -39,8 +39,8 @@ function setup() {
 }
 
 function draw() {
-  background(50);
-  fill(255, 0, 0);
+  background(0);
+  fill(266, 16, 30);
   rect(rectX, rectY, rectW, rectH);
 
   yVelocity += 1.5; //gravity
@@ -73,8 +73,5 @@ function keyPressed() {
   if(keyCode === UP_ARROW && jumping === false) {
     yVelocity -= 20;
     jumping = true;
-  }
-  if(keyCode === DOWN_ARROW) {
-
   }
 }
