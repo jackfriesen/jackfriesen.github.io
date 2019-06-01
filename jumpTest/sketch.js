@@ -10,6 +10,8 @@
 //CREATE SMOOTHER MOVEMENTS LEFT AND RIGHT 
 // (when friction is commented out the square can move of its own)
 
+//^in response: im going to use the rectangle's animations but my bowser's state change logic to receive move commands
+
 
 
 
