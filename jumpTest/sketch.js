@@ -77,3 +77,4 @@ function keyPressed() {
     jumping = true;
   }
 }
+

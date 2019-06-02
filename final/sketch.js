@@ -86,6 +86,7 @@ function setup() {
   loadLevelOne();
 }
 
+//load level environs into their respective arrays and position characters
 function loadLevelOne() {
   //intialize hero location
   x = 3;
@@ -124,6 +125,7 @@ function draw() {
   collide();
 }
 
+//check for collisions
 function collide() {
   for (let i = 0; i < platforms.length; i++) {
     platW = platforms[i].getWidth();
@@ -137,6 +139,7 @@ function collide() {
   }
 }
 
+//display level one
 function levelOne() {
   //bottom floor
   for (let i = 0; i < 9; i++) {
@@ -188,10 +191,12 @@ function keyPressed() {
 //HERO ANIMATIONS//
 //*****************//
 
+//adjustable variables for hero x and y position
 let x;
 let y;
+
+//state variable to dictate which animation is used based on the key pressed
 let state = 0; //0 - idle 1 - right 2 - left 3 - up 4 -down
-let backwardsForwards;
 
 //vars for idle states
 let idleIndex = 8;
@@ -213,7 +218,7 @@ let upCounter = 0;
 let downIndex = 16;
 let downCounter = 0;
 
-//cycle through up states
+//cycle through upwards-facing states
 function up() {
   image(imgArray[upIndex], x, y);
 
@@ -229,7 +234,7 @@ function up() {
   upCounter++;
 }
 
-//cycle through down states
+//cycle through downwards-facing animation states
 function down() {
   image(imgArray[downIndex], x, y);
 
@@ -238,14 +243,14 @@ function down() {
     downIndex++;
   }
 
-  //loop back to start of idle costumes
+  //loop back to start of downwards-facing costumes
   if (downIndex > 19) {
     downIndex = 16;
   }
   downCounter++;
 }
 
-//cycle through left states
+//cycle through left-facing animation states
 function left() {
   image(imgArray[leftIndex], x, y);
 
@@ -254,14 +259,14 @@ function left() {
     leftIndex++;
   }
 
-  //loop back to start of idle costumes
+  //loop back to start of left-facing costumes
   if (leftIndex > 7) {
     leftIndex = 4;
   }
   leftCounter++;
 }
 
-//cycles through right states
+//cycles through right-facing animation states
 function right() {
   image(imgArray[rightIndex], x, y);
 
@@ -270,14 +275,14 @@ function right() {
     rightIndex++;
   }
 
-  //loop back to start of right costumes
+  //loop back to start of right-facing costumes
   if (rightIndex > 3) {
     rightIndex = 0;
   }
   rightCounter++;
 }
 
-//cycles through idle states
+//cycles through idle animation states
 function idle() {
   image(imgArray[idleIndex], x, y);
 
@@ -293,8 +298,8 @@ function idle() {
   idleCounter++;
 }
 
+//check movement animation state and move character accordingly
 function stateCycle() {
-  //cycle through states
   if (state === 2) {
     left();
     x -= 2;
@@ -328,10 +333,12 @@ function stateCycle() {
 //CLASSES//
 //**************************************************************************************************************************************************************************//
 
+//playable hero character
 class Hero {
 
 }
 
+//horizontal platform object for level building
 class HorizontalPlatform {
   //Constructor and Class Properties
   constructor(x_, y_) {
@@ -355,6 +362,7 @@ class HorizontalPlatform {
   }
 }
 
+//vertical platform object for level building
 class VerticalPlatform {
   //Constructor and Class Properties
   constructor(x_, y_) {
