@@ -69,10 +69,8 @@
 //universal vars
 let platforms;
 let hit = false;
-let platX, platY;
 let count = 0;
-
-let myFont; 
+let myFont;
 
 //hero animation vars
 let jumping = true;
@@ -96,54 +94,17 @@ function draw() {
   background(255);
   tutorial();
   animateHero();
+  collisionCheck();
 }
 
-//show tutorial environment
-function tutorial() {
-  loadTutorial();
-
+function collisionCheck() {
   for (let i = 0; i < platforms.length; i++) {
-    platforms[i].display();
+    hit = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY(), platforms[i].getW(), platforms[i].getH());
+    if (hit) {
+      print(hit, count);
+    }
+    count++;
   }
-
-  //instructions on bottom floor
-  push();
-  fill(0);
-  strokeWeight(3);
-  textSize(30);
-  textFont(myFont);
-  textAlign(CENTER);
-
-  text("This is you", 120, height - 180);
-  line(100, height - 165, 125, height - 115);
-  triangle(110, height - 110, 140, height - 120, 130, height - 100);
-
-  text("Use the arrow keys to move!", 550, height - 180);
-  rect(495, height - 240, 30, 30);
-  rect(575, height -240, 30, 30);
-  rect(535, height - 280, 30, 30);
- 
-  fill(255);
-  triangle(497, height - 225, 520, height - 238, 520, height - 212);
-  triangle(600, height - 225, 577, height - 238, 577, height - 212);
-  triangle(537, height - 252, 563, height - 252, 550, height - 278);
-
-
-  pop();
-}
-
-//load tutorial environment into array
-function loadTutorial() {
-
-  //empties platform for level reload
-  platforms = [];
-  //initialize hero location
-  //x = ???
-  //y = ???
-
-  //bottom floor
-  platforms.push(new Platform(0, height - 35, width / 1.7, 15));
-  platforms.push(new Platform (width / 1.7 + 150, height - 35, 1000, 15));
 }
 
 //if key released change state to 0 so nothing happens
@@ -160,7 +121,7 @@ function keyPressed() {
   if (keyCode === RIGHT_ARROW) {
     state = 1;
   }
-  
+
   //jump animation
   if (keyCode === UP_ARROW && jumping === false) {
     yVelocity -= 25;
@@ -208,6 +169,59 @@ function animateHero() {
 
 
 
+//TUTORIAL LEVEL//
+//***************************************************************************************************************************************************************************//
+
+//show tutorial environment
+function tutorial() {
+  loadTutorial();
+  instructions();
+
+  for (let i = 0; i < platforms.length; i++) {
+    platforms[i].display();
+  }
+}
+
+//load tutorial environment into array
+function loadTutorial() {
+  //empties platform for level reload
+  platforms = [];
+
+  //initialize hero location
+  //x = ???
+  //y = ???
+
+  //bottom floor
+  platforms.push(new Platform(0, height - 35, width / 1.7, 15));
+  platforms.push(new Platform(width / 1.7 + 150, height - 35, 1000, 15));
+}
+
+function instructions() {
+  //instructions on bottom floor
+  push();
+  fill(0);
+  strokeWeight(3);
+  textSize(30);
+  textFont(myFont);
+  textAlign(CENTER);
+
+  text("This is you", 120, height - 180);
+  line(100, height - 165, 125, height - 115);
+  triangle(110, height - 110, 140, height - 120, 130, height - 100);
+
+  text("Use the arrow keys to move!", 550, height - 180);
+  rect(495, height - 240, 30, 30);
+  rect(575, height - 240, 30, 30);
+  rect(535, height - 280, 30, 30);
+  fill(255);
+  triangle(497, height - 225, 520, height - 238, 520, height - 212);
+  triangle(600, height - 225, 577, height - 238, 577, height - 212);
+  triangle(537, height - 252, 563, height - 252, 550, height - 278);
+  pop();
+}
+
+
+//***************************************************************************************************************************************************************************//
 
 //CLASSES//
 //**************************************************************************************************************************************************************************//
@@ -235,11 +249,11 @@ class Platform {
     pop();
   }
 
-  getWidth() {
+  getW() {
     return this.w;
   }
 
-  getHeight() {
+  getH() {
     return this.h;
   }
 
