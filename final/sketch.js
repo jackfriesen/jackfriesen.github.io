@@ -2,6 +2,14 @@
 //puzzle/platformer
 
 
+//TO DO
+//
+//collisions on sides of platforms
+//
+//respawn function with level reload, character respawn and death animation, bad guy reset
+//-make level variable that tracks the level user is on so computer knows which respawn function to call
+
+
 
 
 //universal vars
@@ -32,9 +40,10 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  currPlatY = height - 35; //NEED THIS FOR SQUARE TO ADJUST TO PLATFORM HEIGHT
+  //currPlatY = height - 35; //NEED THIS FOR SQUARE TO ADJUST TO PLATFORM HEIGHT
   //initialize hero spawn location
   rectY = height - height / 4;
+  rectY = 0;
   rectX = width / 20;
 }
 
@@ -96,7 +105,7 @@ function keyPressed() {
   }
   //jump animation
   if (keyCode === UP_ARROW && jumping === false) {
-    yVelocity -= 25;
+    yVelocity -= 18;
     jumping = true;
     contactTop = false;
   }
@@ -123,9 +132,8 @@ function animateHero() {
   rectX += xVelocity;
   rectY += yVelocity;
   xVelocity *= 0.9; //friction
-  yVelocity *= 0.9; //friction
 
-  //dont fall through the floor
+  //dont fall through the floor if touching it
   if (contactTop) {
     jumping = false;
     rectY = height - rectH - (height - currPlatY);
@@ -137,7 +145,7 @@ function animateHero() {
     yVelocity += 1.7; //gravity
   }
 
-  //check states
+  //check states for left and right movement
   if (state === 1) {
     xVelocity += 1; //go right
   }
@@ -156,6 +164,7 @@ function tutorial() {
   loadTutorial();
   instructions();
 
+  //display platforms
   for (let i = 0; i < platforms.length; i++) {
     platforms[i].display();
   }
@@ -166,12 +175,10 @@ function loadTutorial() {
   //empties platform for level reload
   platforms = [];
 
-
-
   //bottom floor
   platforms.push(new Platform(0, height - 35, width / 1.7, 15));
-  platforms.push(new Platform(width / 1.7 + 150, height - 35, 1000, 15));
-  platforms.push(new Platform(1200, height - 100, 200, 15));
+  platforms.push(new Platform(width / 1.7 + 150, height - 35, width / 1.7, 15));
+  platforms.push(new Platform(width / 1.3, height - 100, 200, 15));
 }
 
 //displays instructions on screen for user to learn to play game
@@ -184,10 +191,12 @@ function instructions() {
   textFont(myFont);
   textAlign(CENTER);
 
+  //"this is you" and arrow
   text("This is you", width / 15, height - 180);
   line(width / 25, height - 165, width / 18, height - 115);
   triangle(width / 20, height - 110, width / 17, height - 120, width / 17, height - 100);
 
+  //use the arrow keys to move" and buttons
   text("Use the arrow keys to move!", width / 3, height - 180);
   rect(width / 3 - 50, height - 240, 30, 30);
   rect(width / 3 + 50, height - 240, 30, 30);
@@ -195,7 +204,7 @@ function instructions() {
   fill(255);
   triangle(width / 3 - 48, height - 225, width / 3 - 22, height - 238, width / 3 - 22, height - 212);
   triangle(width / 3 + 78, height - 225, width / 3 + 52, height - 238, width / 3 + 52, height - 212);
-  // triangle(537, height - 252, 563, height - 252, 550, height - 278);
+  triangle(width / 3 + 2, height - 252, width / 3 + 28, height - 252, width / 3 + 15, height - 278);
   pop();
 }
 
