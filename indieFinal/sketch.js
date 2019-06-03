@@ -2,70 +2,9 @@
 //puzzle/platformer
 //game is meant to be played on devices with a resolution of 1600 x 789 or higher
 
-//new laptop resolution is 981x754
-
-//horizontal platforms are 180x15
-//vertical platforms are 15x150
-
-//jump height is about 93.87 px
-//jump distance is about 137 px
-
-
-//FOR COLLISIONS
-//
-//check if "platforms[i].getX()" works, if not use platformsX array
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //TO DO 
-//
-//save tutorial creation for later!
-//create collisions
-//generate levels and test to see if collisions work
-//create code to stop gravity if touching the floor
-
 //REMOVE FIXED VALUES AND BASE THIS OFF OF MATH WITH WIDTH AND HEIGHT (width / 2 instead of 100px)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //universal vars
@@ -73,6 +12,9 @@ let platforms;
 let hit = false;
 let count = 0;
 let myFont;
+let contact = true;
+let currPlatY;
+
 
 //hero animation vars
 let jumping = true;
@@ -90,10 +32,11 @@ function preload() {
 
 function setup() {
   createCanvas(1600, 789);
+  currPlatY = height - 35; //NEED THIS FOR SQUARE TO ADJUST TO PLATFORM HEIGHT
 }
 
 function draw() {
-  background(255);
+  background(220);
   tutorial();
   animateHero();
   collisionCheck();
@@ -101,11 +44,13 @@ function draw() {
 
 function collisionCheck() {
   for (let i = 0; i < platforms.length; i++) {
-    hit = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY(), platforms[i].getW(), platforms[i].getH());
-    if (hit) {
-      //print(hit, count);
+    //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
+    hit = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY(), platforms[i].getW(), 1);
+
+    if(hit) {
+      contact = true;
+      currPlatY = platforms[i].getY();
     }
-    count++;
   }
 }
 
@@ -123,15 +68,16 @@ function keyPressed() {
   if (keyCode === RIGHT_ARROW) {
     state = 1;
   }
-
   //jump animation
   if (keyCode === UP_ARROW && jumping === false) {
+    contact = false;    
     yVelocity -= 25;
     jumping = true;
   }
 }
 
 function animateHero() {
+  //draw hero
   push();
   fill(255, 0, 0);
   noStroke();
@@ -139,25 +85,21 @@ function animateHero() {
   pop();
 
   //animating movement commands
-  yVelocity += 1.7; //gravity
   rectX += xVelocity;
   rectY += yVelocity;
   xVelocity *= 0.9; //friction
   yVelocity *= 0.9; //friction
 
   //dont fall through the floor
-  if (rectY > height - rectH - 35) {
+  if (contact) {
     jumping = false;
-    rectY = height - rectH - 35;
+    rectY = height - rectH - (height - currPlatY);
     yVelocity = 0;
   }
-
-  //lets rectangle teleport from one side of screen to another
-  if (rectX < 0 - rectW) {
-    rectX = width - rectW;
-  }
-  else if (rectX > width) {
-    rectX = 1;
+  //keep falling if not touching floor
+  else {
+    yVelocity += 1.7; //gravity
+    contact = false;
   }
 
   //check states
@@ -196,8 +138,10 @@ function loadTutorial() {
   //bottom floor
   platforms.push(new Platform(0, height - 35, width / 1.7, 15));
   platforms.push(new Platform(width / 1.7 + 150, height - 35, 1000, 15));
+  platforms.push(new Platform(1200, 700, 200, 15));
 }
 
+//displays instructions on screen for user to learn to play game
 function instructions() {
   //instructions on bottom floor
   push();
@@ -230,7 +174,12 @@ function instructions() {
 
 //playable hero character
 class Hero {
-
+  constructor(x_, y_, w_, h_) {
+    this.x = x_;
+    this.y = y_;
+    this.w = w_;
+    this.h = h_;
+  }
 }
 
 // platform object for level building
