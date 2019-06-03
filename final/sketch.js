@@ -1,29 +1,28 @@
 // Final
 //puzzle/platformer
-//game is meant to be played on devices with a resolution of 1600 x 789 or higher
 
 
-//TO DO 
-//REMOVE FIXED VALUES AND BASE THIS OFF OF MATH WITH WIDTH AND HEIGHT (width / 2 instead of 100px)
-//create hitboxes on underside of floating platforms to prevent hero from teleporting to the top of them
 
 
 //universal vars
 let platforms;
-let hit = false;
+let hitTop = false;
+let contactTop = false;
+let hitBottom = false;
+let contactBottom = false;
 let count = 0; //just a var for checking console printing, can be deleted when program is complete
 let myFont;
-let contact = true;
 let currPlatY;
+let currPlatH;
 
 
 //hero animation vars
 let jumping = true;
 let rectW = 32;
 let rectH = 32;
-let rectX = 144;
+let rectX;
 let xVelocity = 0;
-let rectY = 630;
+let rectY;
 let yVelocity = 0;
 let state = 0; // 0 = idle, 1 = right, 2 = left
 
@@ -32,8 +31,11 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1600, 789);
+  createCanvas(windowWidth, windowHeight);
   currPlatY = height - 35; //NEED THIS FOR SQUARE TO ADJUST TO PLATFORM HEIGHT
+  //initialize hero spawn location
+  rectY = height - height / 4;
+  rectX = width / 20;
 }
 
 function draw() {
@@ -41,22 +43,39 @@ function draw() {
   tutorial();
   animateHero();
   collisionCheck();
+
+  // print(rectY);
+  print(hitBottom);
+  // print(platforms[0].getY() - platforms);
 }
 
 //loop through platforms array and check if hero is touching any platforms
 //then update state variables based on answer. "hit" is only used locally 
-//to change "contact" which is used globally. contact can be found in 
+//to change "contactTop" which is used globally. contactTop can be found in 
 //animateHero() and is used to stop hero from falling through floor and
 //also to make hero fall if there isnt a floor. it can also be found in
 //keyPressed() when the up arrow is pressed to allow the hero to jump
 function collisionCheck() {
+  //checks top of platform
   for (let i = 0; i < platforms.length; i++) {
     //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
-    hit = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY(), platforms[i].getW(), 1);
+    hitTop = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY(), platforms[i].getW(), 1);
 
-    if(hit) {
-      contact = true;
+    if (hitTop) {
+      contactTop = true;
       currPlatY = platforms[i].getY();
+    }
+  }
+
+  //checks bottom of platform
+  for (let i = 0; i < platforms.length; i++) {
+    //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
+    hitBottom = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY() + platforms[i].getH(), platforms[i].getW(), 1);
+
+    if (hitBottom) {
+      contactBottom = true;
+      currPlatY = platforms[i].getY();
+      currPlatH = platforms[i].getH();
     }
   }
 }
@@ -76,10 +95,10 @@ function keyPressed() {
     state = 1;
   }
   //jump animation
-  if (keyCode === UP_ARROW && jumping === false) {   
+  if (keyCode === UP_ARROW && jumping === false) {
     yVelocity -= 25;
     jumping = true;
-    contact = false; 
+    contactTop = false;
   }
 }
 
@@ -91,6 +110,15 @@ function animateHero() {
   rect(rectX, rectY, rectW, rectH);
   pop();
 
+  //bounce off underside of platforms
+  //NEEDS to be above animating move commmands
+  if (contactBottom) {
+    rectY = height - (height - currPlatY) + currPlatH + 1; //et height to 1px below underside of platform
+    yVelocity = 0; //set velocity to 0 to apply gravity
+    yVelocity += 1.7; //apply gravity
+    contactBottom = false; //tell computer it isn't touching bottom of platform so it has time to fall
+  }
+
   //animating movement commands
   rectX += xVelocity;
   rectY += yVelocity;
@@ -98,11 +126,11 @@ function animateHero() {
   yVelocity *= 0.9; //friction
 
   //dont fall through the floor
-  if (contact) {
+  if (contactTop) {
     jumping = false;
     rectY = height - rectH - (height - currPlatY);
     yVelocity = 0;
-    contact = false;
+    contactTop = false;
   }
   //keep falling if not touching floor
   else {
@@ -138,14 +166,12 @@ function loadTutorial() {
   //empties platform for level reload
   platforms = [];
 
-  //initialize hero location
-  //x = ???
-  //y = ???
+
 
   //bottom floor
   platforms.push(new Platform(0, height - 35, width / 1.7, 15));
   platforms.push(new Platform(width / 1.7 + 150, height - 35, 1000, 15));
-  platforms.push(new Platform(1200, 700, 200, 15));
+  platforms.push(new Platform(1200, height - 100, 200, 15));
 }
 
 //displays instructions on screen for user to learn to play game
@@ -158,18 +184,18 @@ function instructions() {
   textFont(myFont);
   textAlign(CENTER);
 
-  text("This is you", 120, height - 180);
-  line(100, height - 165, 125, height - 115);
-  triangle(110, height - 110, 140, height - 120, 130, height - 100);
+  text("This is you", width / 15, height - 180);
+  line(width / 25, height - 165, width / 18, height - 115);
+  triangle(width / 20, height - 110, width / 17, height - 120, width / 17, height - 100);
 
-  text("Use the arrow keys to move!", 550, height - 180);
-  rect(495, height - 240, 30, 30);
-  rect(575, height - 240, 30, 30);
-  rect(535, height - 280, 30, 30);
+  text("Use the arrow keys to move!", width / 3, height - 180);
+  rect(width / 3 - 50, height - 240, 30, 30);
+  rect(width / 3 + 50, height - 240, 30, 30);
+  rect(width / 3, height - 280, 30, 30);
   fill(255);
-  triangle(497, height - 225, 520, height - 238, 520, height - 212);
-  triangle(600, height - 225, 577, height - 238, 577, height - 212);
-  triangle(537, height - 252, 563, height - 252, 550, height - 278);
+  triangle(width / 3 - 48, height - 225, width / 3 - 22, height - 238, width / 3 - 22, height - 212);
+  triangle(width / 3 + 78, height - 225, width / 3 + 52, height - 238, width / 3 + 52, height - 212);
+  // triangle(537, height - 252, 563, height - 252, 550, height - 278);
   pop();
 }
 
