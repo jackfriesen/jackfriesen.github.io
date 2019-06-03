@@ -14,10 +14,6 @@
 
 //universal vars
 let platforms;
-let hitTop = false;
-let contactTop = false;
-let hitBottom = false;
-let contactBottom = false;
 let count = 0; //just a var for checking console printing, can be deleted when program is complete
 let myFont;
 let currPlatY;
@@ -28,11 +24,14 @@ let currPlatH;
 let jumping = true;
 let rectW = 32;
 let rectH = 32;
-let rectX;
+let rectX, rectY;
 let xVelocity = 0;
-let rectY;
 let yVelocity = 0;
 let state = 0; // 0 = idle, 1 = right, 2 = left
+let hitTop = false;
+let contactTop = false;
+let hitBottom = false;
+let contactBottom = false;
 
 function preload() {
   myFont = loadFont("assets/guilin.ttf");
@@ -43,7 +42,6 @@ function setup() {
   //currPlatY = height - 35; //NEED THIS FOR SQUARE TO ADJUST TO PLATFORM HEIGHT
   //initialize hero spawn location
   rectY = height - height / 4;
-  rectY = 0;
   rectX = width / 20;
 }
 
@@ -52,10 +50,6 @@ function draw() {
   tutorial();
   animateHero();
   collisionCheck();
-
-  // print(rectY);
-  print(hitBottom);
-  // print(platforms[0].getY() - platforms);
 }
 
 //loop through platforms array and check if hero is touching any platforms
@@ -98,7 +92,6 @@ function keyReleased() {
 function keyPressed() {
   if (keyCode === LEFT_ARROW) {
     state = 2;
-
   }
   if (keyCode === RIGHT_ARROW) {
     state = 1;
@@ -210,6 +203,8 @@ function instructions() {
 
 
 //***************************************************************************************************************************************************************************//
+
+
 
 //CLASSES//
 //**************************************************************************************************************************************************************************//
