@@ -16,8 +16,7 @@
 let platforms;
 let count = 0; //just a var for checking console printing, can be deleted when program is complete
 let myFont;
-let currPlatY;
-let currPlatH;
+let currPlatY, currPlatX, currPlatH;
 
 
 //hero animation vars
@@ -32,6 +31,10 @@ let hitTop = false;
 let contactTop = false;
 let hitBottom = false;
 let contactBottom = false;
+let hitLeft = false;
+let contactLeft = false;
+let hitRight = false;
+let contactRight = false;
 
 function preload() {
   myFont = loadFont("assets/guilin.ttf");
@@ -81,6 +84,26 @@ function collisionCheck() {
       currPlatH = platforms[i].getH();
     }
   }
+
+  //checks left side of platform
+  for (let i = 0; i < platforms.length; i++) {
+    // - 1 values attatched to second hitbox y and h values to avoid top and bottom collisions
+    hitLeft = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY() + 2, 1, platforms[i].getH() - 2);
+
+    if (hitLeft) {
+      contactLeft = true;
+    }
+  }
+
+  //checks right side of platform
+  for(let i = 0; i < platforms.length; i ++)  {
+    //extra math is to move hitbox to right side of platform
+    hitRight = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX() + platforms[i].getW(), platforms[i].getY() + 2, 1, platforms[i].getH() - 2);
+
+    if (hitRight) {
+      contactRight = true;
+    }
+  }
 }
 
 //if key released change state to 0 so nothing happens
@@ -90,10 +113,10 @@ function keyReleased() {
 
 //receives movement commands and changes state variable accordingly
 function keyPressed() {
-  if (keyCode === LEFT_ARROW) {
+  if (keyCode === LEFT_ARROW && !contactRight) {
     state = 2;
   }
-  if (keyCode === RIGHT_ARROW) {
+  if (keyCode === RIGHT_ARROW && !contactLeft) {
     state = 1;
   }
   //jump animation
@@ -139,12 +162,31 @@ function animateHero() {
   }
 
   //check states for left and right movement
-  if (state === 1) {
+  if (state === 1 && !contactLeft) {
     xVelocity += 1; //go right
   }
-  else if (state === 2) {
+  if (state === 2 && !contactRight) {
     xVelocity -= 1; //go left
   }
+
+  //check if running into left side of a platform
+  if (contactLeft) {
+    xVelocity = 0;
+    rectX -= 1;
+    jumping = true; //need this so cant run into walls and teleport to their top
+    contactLeft = false;
+  }
+
+  //check if running into left side of a platform
+  if (contactRight) {
+    xVelocity = 0;
+    rectX += 1;
+    jumping = true; //need this so cant run into walls and teleport to their top
+    contactRight = false;
+  }
+
+
+
 }
 
 
@@ -172,6 +214,7 @@ function loadTutorial() {
   platforms.push(new Platform(0, height - 35, width / 1.7, 15));
   platforms.push(new Platform(width / 1.7 + 150, height - 35, width / 1.7, 15));
   platforms.push(new Platform(width / 1.3, height - 100, 200, 15));
+  platforms.push(new Platform(width / 3, height - 100, 20, 75));
 }
 
 //displays instructions on screen for user to learn to play game
