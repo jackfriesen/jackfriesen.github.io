@@ -50,6 +50,8 @@
 //generate levels and test to see if collisions work
 //create code to stop gravity if touching the floor
 
+//REMOVE FIXED VALUES AND BASE THIS OFF OF MATH WITH WIDTH AND HEIGHT (width / 2 instead of 100px)
+
 
 
 
@@ -101,7 +103,7 @@ function collisionCheck() {
   for (let i = 0; i < platforms.length; i++) {
     hit = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY(), platforms[i].getW(), platforms[i].getH());
     if (hit) {
-      print(hit, count);
+      //print(hit, count);
     }
     count++;
   }
