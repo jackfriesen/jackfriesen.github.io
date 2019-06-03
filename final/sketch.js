@@ -5,12 +5,13 @@
 
 //TO DO 
 //REMOVE FIXED VALUES AND BASE THIS OFF OF MATH WITH WIDTH AND HEIGHT (width / 2 instead of 100px)
+//create hitboxes on underside of floating platforms to prevent hero from teleporting to the top of them
 
 
 //universal vars
 let platforms;
 let hit = false;
-let count = 0;
+let count = 0; //just a var for checking console printing, can be deleted when program is complete
 let myFont;
 let contact = true;
 let currPlatY;
@@ -42,6 +43,12 @@ function draw() {
   collisionCheck();
 }
 
+//loop through platforms array and check if hero is touching any platforms
+//then update state variables based on answer. "hit" is only used locally 
+//to change "contact" which is used globally. contact can be found in 
+//animateHero() and is used to stop hero from falling through floor and
+//also to make hero fall if there isnt a floor. it can also be found in
+//keyPressed() when the up arrow is pressed to allow the hero to jump
 function collisionCheck() {
   for (let i = 0; i < platforms.length; i++) {
     //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
@@ -69,10 +76,10 @@ function keyPressed() {
     state = 1;
   }
   //jump animation
-  if (keyCode === UP_ARROW && jumping === false) {
-    contact = false;    
+  if (keyCode === UP_ARROW && jumping === false) {   
     yVelocity -= 25;
     jumping = true;
+    contact = false; 
   }
 }
 
@@ -95,11 +102,11 @@ function animateHero() {
     jumping = false;
     rectY = height - rectH - (height - currPlatY);
     yVelocity = 0;
+    contact = false;
   }
   //keep falling if not touching floor
   else {
     yVelocity += 1.7; //gravity
-    contact = false;
   }
 
   //check states
