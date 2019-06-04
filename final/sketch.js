@@ -4,7 +4,7 @@
 
 //TO DO
 //
-//collisions on sides of platforms
+//fix bad guy
 //
 //respawn function with level reload, character respawn and death animation, bad guy reset
 //-make level variable that tracks the level user is on so computer knows which respawn function to call
@@ -17,6 +17,7 @@ let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight
 let platforms;
 let count = 0; //just a var for checking console printing, can be deleted when program is complete
 let myFont;
+let badguy;
 
 
 //hero animation vars
@@ -45,6 +46,7 @@ function draw() {
   hero();
   collisionCheck();
 }
+
 
 //checks for collisions between hero and environs
 function collisionCheck() {
@@ -247,7 +249,39 @@ function instructions() {
 //CLASSES//
 //**************************************************************************************************************************************************************************//
 
+//makes a basic bad guy
+class RectBadGuy {
+  //Constructor and Class Properties
+  constructor(xR1_, y_, xR2_, w_, h_, r_, g_, b_) {
+    this.xRangeLeft = xR1_; //must be leftmost x value in range
+    this.xRangeRight = xR2_; //must be rightmost x value in range
+    this.x = xR1_; //bad guy's variable x position
+    this.xVelocity = 10;
+    this.y = y_; //most be lower y value
+    this.w = w_;
+    this.h = h_;
+    this.r = r_;
+    this.g = g_;
+    this.b = b_;
+  }
 
+  //Class Methods
+
+  display() {
+    fill(this.r, this.g, this.b);
+    rect(this.x, this.y, this.w, this.h);
+  }
+
+  move() {
+    if(this.x <= this.xRangeLeft) {
+      this.xVelocity *= -1;
+    }
+    else if(this.x >= this.xRangeRight) {
+      this.xVelocity *= -1;
+    }
+    this.x += this.xVelocity;
+  }
+}
 
 // platform object for level building
 class Platform {
