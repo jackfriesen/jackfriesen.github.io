@@ -12,11 +12,11 @@
 
 
 
-//universal vars
+
+let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, currPlatY, currPlatH; //collision checking variables
 let platforms;
 let count = 0; //just a var for checking console printing, can be deleted when program is complete
 let myFont;
-let currPlatY, currPlatX, currPlatH;
 
 
 //hero animation vars
@@ -27,14 +27,6 @@ let rectX, rectY;
 let xVelocity = 0;
 let yVelocity = 0;
 let state = 0; // 0 = idle, 1 = right, 2 = left
-let hitTop = false;
-let contactTop = false;
-let hitBottom = false;
-let contactBottom = false;
-let hitLeft = false;
-let contactLeft = false;
-let hitRight = false;
-let contactRight = false;
 
 function preload() {
   myFont = loadFont("assets/guilin.ttf");
@@ -42,26 +34,27 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  //currPlatY = height - 35; //NEED THIS FOR SQUARE TO ADJUST TO PLATFORM HEIGHT
   //initialize hero spawn location
   rectY = height - height / 4;
-  rectX = width / 20;
+  rectX = width / 18;
 }
 
 function draw() {
   background(220);
   tutorial();
-  animateHero();
+  hero();
   collisionCheck();
 }
 
+//checks for collisions between hero and environs
+function collisionCheck() {
 //loop through platforms array and check if hero is touching any platforms
 //then update state variables based on answer. "hit" is only used locally 
 //to change "contactTop" which is used globally. contactTop can be found in 
 //animateHero() and is used to stop hero from falling through floor and
 //also to make hero fall if there isnt a floor. it can also be found in
 //keyPressed() when the up arrow is pressed to allow the hero to jump
-function collisionCheck() {
+
   //checks top of platform
   for (let i = 0; i < platforms.length; i++) {
     //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
@@ -127,7 +120,9 @@ function keyPressed() {
   }
 }
 
-function animateHero() {
+
+//playable hero character
+function hero() {
   //draw hero
   push();
   fill(255, 0, 0);
@@ -252,15 +247,7 @@ function instructions() {
 //CLASSES//
 //**************************************************************************************************************************************************************************//
 
-//playable hero character
-class Hero {
-  constructor(x_, y_, w_, h_) {
-    this.x = x_;
-    this.y = y_;
-    this.w = w_;
-    this.h = h_;
-  }
-}
+
 
 // platform object for level building
 class Platform {
