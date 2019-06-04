@@ -4,17 +4,17 @@
 
 //TO DO
 //
-//respawn function with level reload, character respawn and death animation, bad guy reset
-//-make level variable that tracks the level user is on so computer knows which respawn function to call
-//-for bad guy reset, have loading bad guys be based on a boolean that sets itself back to false after bad guys are loaded
-//
 //make hero die when touching bad guy
+//- in bad guy class make 12 class methods to return 6 x,y pairs of the rectbadguys vertices for collision detection
+//
+//make level variable that tracks the level user is on so computer knows which respawn function to call
 
 
 
 
 
-let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, currPlatY, currPlatH; //collision checking variables
+
+let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, currPlatY, currPlatH, hitBad, contactBad; //collision checking variables
 let platforms;
 let count = 0; //just a var for checking console printing, can be deleted when program is complete
 let myFont;
@@ -38,9 +38,7 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  //initialize hero spawn location
-  rectY = height - height / 4;
-  rectX = width / 18;
+
 }
 
 function draw() {
@@ -48,6 +46,7 @@ function draw() {
   tutorial();
   hero();
   collisionCheck();
+  deathCheck();
 }
 
 //checks for collisions between hero and environs
@@ -105,8 +104,12 @@ function collisionCheck() {
 
 //check if hero has died and needs to respawn
 function deathCheck() {
+  //falling off the world
+  if (rectY > height) {
+    respawning = true;
+  }
 
-  //if yes, respawning = true
+
 }
 
 //if key released change state to 0 so nothing happens
@@ -199,7 +202,11 @@ function hero() {
 
 //show tutorial environment
 function tutorial() {
-  loadTutorial();
+  if (respawning) { // only loads bad guy when reloading level so that bad guy can animate and doesnt keep being reset to start location
+    loadTutorial();
+    tutorialLoadEnemies();
+    respawning = false;
+  }
   instructions();
   tutorialEnemies();
 
@@ -211,22 +218,22 @@ function tutorial() {
 
 //load tutorial environment into array
 function loadTutorial() {
+
+  //initialize hero spawn location
+  rectY = height - height / 4;
+  rectX = width / 18;
+
   //empties platform for level reload
   platforms = [];
 
   //bottom floor
   platforms.push(new Platform(0, height - 35, width / 1.7, 15));
-  platforms.push(new Platform(width / 1.7 + 150, height - 35, width / 1.7, 15));
+  platforms.push(new Platform(width / 1.7 + 150, height - 35, width - (width / 1.7 + 150), 15));
   platforms.push(new Platform(width / 1.3, height - 100, 200, 15));
   platforms.push(new Platform(width / 3, height - 100, 20, 75));
 }
 
 function tutorialEnemies() {
-  if (respawning) { // only loads bad guy when reloading level so that bad guy can animate and doesnt keep being reset to start location
-    tutorialLoadEnemies();
-    respawning = false;
-  }
-
   for (let i = 0; i < enemies.length; i++) {
     enemies[i].move();
     enemies[i].display();
@@ -254,7 +261,7 @@ function instructions() {
   triangle(width / 20, height - 110, width / 17, height - 120, width / 17, height - 100);
 
   //watch out for bad guys
-  text("Watch out for bad guys", width / 1.3 , height - 180);
+  text("Watch out for bad guys", width / 1.3, height - 180);
 
   //use the arrow keys to move" and buttons
   text("Use the arrow keys to move", width / 3, height - 180);
@@ -313,6 +320,28 @@ class RectBadGuy {
     }
     this.x += this.xVelocity;
   }
+
+  // //get the top left square vertex (SV) x pos
+  // getSVX1() {
+  //   return this.x;
+  // }
+
+  // //get the top left square vertex (SV) x pos
+  // getSVY1() {
+  //   return this.y;
+  // }
+
+  // getSVX2() {
+
+  // }
+
+
+  // getSVY2() {
+
+  // }
+
+  // getS
+
 }
 
 // platform object for level building
