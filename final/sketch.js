@@ -4,10 +4,11 @@
 
 //TO DO
 //
-//fix bad guy
-//
 //respawn function with level reload, character respawn and death animation, bad guy reset
 //-make level variable that tracks the level user is on so computer knows which respawn function to call
+//-for bad guy reset, have loading bad guys be based on a boolean that sets itself back to false after bad guys are loaded
+//
+//make hero die when touching bad guy
 
 
 
@@ -17,7 +18,8 @@ let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight
 let platforms;
 let count = 0; //just a var for checking console printing, can be deleted when program is complete
 let myFont;
-let badguy;
+let enemies;
+let respawning = true;
 
 
 //hero animation vars
@@ -29,6 +31,7 @@ let xVelocity = 0;
 let yVelocity = 0;
 let state = 0; // 0 = idle, 1 = right, 2 = left
 
+//load game font
 function preload() {
   myFont = loadFont("assets/guilin.ttf");
 }
@@ -41,21 +44,20 @@ function setup() {
 }
 
 function draw() {
-  background(220);
+  background(255);
   tutorial();
   hero();
   collisionCheck();
 }
 
-
 //checks for collisions between hero and environs
 function collisionCheck() {
-//loop through platforms array and check if hero is touching any platforms
-//then update state variables based on answer. "hit" is only used locally 
-//to change "contactTop" which is used globally. contactTop can be found in 
-//animateHero() and is used to stop hero from falling through floor and
-//also to make hero fall if there isnt a floor. it can also be found in
-//keyPressed() when the up arrow is pressed to allow the hero to jump
+  //loop through platforms array and check if hero is touching any platforms
+  //then update state variables based on answer. "hit" is only used locally 
+  //to change "contactTop" which is used globally. contactTop can be found in 
+  //animateHero() and is used to stop hero from falling through floor and
+  //also to make hero fall if there isnt a floor. it can also be found in
+  //keyPressed() when the up arrow is pressed to allow the hero to jump
 
   //checks top of platform
   for (let i = 0; i < platforms.length; i++) {
@@ -91,7 +93,7 @@ function collisionCheck() {
   }
 
   //checks right side of platform
-  for(let i = 0; i < platforms.length; i ++)  {
+  for (let i = 0; i < platforms.length; i++) {
     //extra math is to move hitbox to right side of platform
     hitRight = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX() + platforms[i].getW(), platforms[i].getY() + 2, 1, platforms[i].getH() - 2);
 
@@ -99,6 +101,12 @@ function collisionCheck() {
       contactRight = true;
     }
   }
+}
+
+//check if hero has died and needs to respawn
+function deathCheck() {
+
+  //if yes, respawning = true
 }
 
 //if key released change state to 0 so nothing happens
@@ -122,7 +130,6 @@ function keyPressed() {
   }
 }
 
-
 //playable hero character
 function hero() {
   //draw hero
@@ -135,7 +142,7 @@ function hero() {
   //bounce off underside of platforms
   //NEEDS to be above animating move commmands
   if (contactBottom) {
-    rectY = height - (height - currPlatY) + currPlatH + 1; //et height to 1px below underside of platform
+    rectY = height - (height - currPlatY) + currPlatH + 1; //get height to 1px below underside of platform
     yVelocity = 0; //set velocity to 0 to apply gravity
     yVelocity += 1.7; //apply gravity
     contactBottom = false; //tell computer it isn't touching bottom of platform so it has time to fall
@@ -181,10 +188,9 @@ function hero() {
     jumping = true; //need this so cant run into walls and teleport to their top
     contactRight = false;
   }
-
-
-
 }
+
+
 
 
 
@@ -195,6 +201,7 @@ function hero() {
 function tutorial() {
   loadTutorial();
   instructions();
+  tutorialEnemies();
 
   //display platforms
   for (let i = 0; i < platforms.length; i++) {
@@ -214,6 +221,23 @@ function loadTutorial() {
   platforms.push(new Platform(width / 3, height - 100, 20, 75));
 }
 
+function tutorialEnemies() {
+  if (respawning) { // only loads bad guy when reloading level so that bad guy can animate and doesnt keep being reset to start location
+    tutorialLoadEnemies();
+    respawning = false;
+  }
+
+  for (let i = 0; i < enemies.length; i++) {
+    enemies[i].move();
+    enemies[i].display();
+  }
+}
+
+function tutorialLoadEnemies() {
+  enemies = [];
+  enemies.push(new RectBadGuy(width / 1.7 + 170, height - 35 - 32, width - 60, 45, 32, 75, 0, 130));
+}
+
 //displays instructions on screen for user to learn to play game
 function instructions() {
   //instructions on bottom floor
@@ -229,8 +253,11 @@ function instructions() {
   line(width / 25, height - 165, width / 18, height - 115);
   triangle(width / 20, height - 110, width / 17, height - 120, width / 17, height - 100);
 
+  //watch out for bad guys
+  text("Watch out for bad guys", width / 1.3 , height - 180);
+
   //use the arrow keys to move" and buttons
-  text("Use the arrow keys to move!", width / 3, height - 180);
+  text("Use the arrow keys to move", width / 3, height - 180);
   rect(width / 3 - 50, height - 240, 30, 30);
   rect(width / 3 + 50, height - 240, 30, 30);
   rect(width / 3, height - 280, 30, 30);
@@ -241,8 +268,8 @@ function instructions() {
   pop();
 }
 
-
 //***************************************************************************************************************************************************************************//
+
 
 
 
@@ -255,8 +282,8 @@ class RectBadGuy {
   constructor(xR1_, y_, xR2_, w_, h_, r_, g_, b_) {
     this.xRangeLeft = xR1_; //must be leftmost x value in range
     this.xRangeRight = xR2_; //must be rightmost x value in range
-    this.x = xR1_; //bad guy's variable x position
-    this.xVelocity = 10;
+    this.x = xR1_ + 10; //bad guy's variable x position 
+    this.xVelocity = 3;
     this.y = y_; //most be lower y value
     this.w = w_;
     this.h = h_;
@@ -268,15 +295,20 @@ class RectBadGuy {
   //Class Methods
 
   display() {
+    push();
+    stroke(this.r, this.g, this.b);
     fill(this.r, this.g, this.b);
     rect(this.x, this.y, this.w, this.h);
+    triangle(this.x - 10, this.y + this.h / 2, this.x, this.y, this.x, this.y + this.h);
+    triangle(this.x + this.w + 10, this.y + this.h / 2, this.x + this.w, this.y, this.x + this.w, this.y + this.h);
+    pop();
   }
 
   move() {
-    if(this.x <= this.xRangeLeft) {
+    if (this.x <= this.xRangeLeft) {
       this.xVelocity *= -1;
     }
-    else if(this.x >= this.xRangeRight) {
+    else if (this.x >= this.xRangeRight) {
       this.xVelocity *= -1;
     }
     this.x += this.xVelocity;
