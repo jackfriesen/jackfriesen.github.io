@@ -6,6 +6,9 @@
 //
 //make hero die when touching bad guy
 //- in bad guy class make 12 class methods to return 6 x,y pairs of the rectbadguys vertices for collision detection
+//-for bad guy collision checker, make a bunch of if statements for diff types of polygons
+//-ex: have a function for rectbadguy called getVertices which returns 6 cos 6 vertices. then in the collision checker have if(getVertices) { hitBad = RectPoly}
+//
 //
 //make level variable that tracks the level user is on so computer knows which respawn function to call
 
