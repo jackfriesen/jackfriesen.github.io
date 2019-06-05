@@ -41,15 +41,16 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-
 }
 
 function draw() {
   background(255);
   tutorial();
   hero();
-  collisionCheck();
   deathCheck();
+  collisionCheck();
+
+  //  print(enemies[0].getSVX2());
 }
 
 //checks for collisions between hero and environs
@@ -72,7 +73,7 @@ function collisionCheck() {
     }
   }
 
-  //checks bottom of platform
+  // checks bottom of platform
   for (let i = 0; i < platforms.length; i++) {
     //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
     hitBottom = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY() + platforms[i].getH(), platforms[i].getW(), 1);
@@ -113,6 +114,16 @@ function deathCheck() {
   }
 
 
+  // print(enemies.length);
+  // print(enemies[0]);
+  for (let j = 0; j < enemies.length; j++) {
+    //check rect bad guys collision
+    if (enemies[j].getVertices() === 6) {
+      print(rectX, rectY, rectW, rectH, enemies[j].getSVX1()); //KEEP ADDING MORE VERTICES FUNCTIONS TILL I FIND THE BREAK
+      //hitBad = collideRectPoly(rectX, rectY, rectW, rectH, enemies[j].getSVX1(), enemies[j].getSVY1(), enemies[j].getSVX2(), enemies[j].getSVY2(), enemies[j].getTVX1(), enemies[j].getTVY1(), enemies[j].getSVX3(), enemies[j].getSVY3(), enemies[j].getSVX4(), enemies[j].getSVY4().enemies[j].getTVX2(), enemies[j].getTVY2());
+      //print(hitBad);
+    }
+  }
 }
 
 //if key released change state to 0 so nothing happens
@@ -236,6 +247,7 @@ function loadTutorial() {
   platforms.push(new Platform(width / 3, height - 100, 20, 75));
 }
 
+//show and animate enemies on tutorial level
 function tutorialEnemies() {
   for (let i = 0; i < enemies.length; i++) {
     enemies[i].move();
@@ -243,9 +255,10 @@ function tutorialEnemies() {
   }
 }
 
+//reload and initiate enemies on tutorial level
 function tutorialLoadEnemies() {
   enemies = [];
-  enemies.push(new RectBadGuy(width / 1.7 + 170, height - 35 - 32, width - 60, 45, 32, 75, 0, 130));
+  enemies.push(new RectBadGuy(width / 1.7 + 170, height - 35 - 32, width - 60, 40, 32, 75, 0, 130));
 }
 
 //displays instructions on screen for user to learn to play game
@@ -297,8 +310,8 @@ function instructions() {
 class RectBadGuy {
   //Constructor and Class Properties
   constructor(xR1_, y_, xR2_, w_, h_, r_, g_, b_) {
-    this.xRangeLeft = xR1_; //must be leftmost x value in range
-    this.xRangeRight = xR2_; //must be rightmost x value in range
+    this.xRangeLeft = xR1_; //must be leftmost x value in movement range
+    this.xRangeRight = xR2_; //must be rightmost x value in movement range
     this.x = xR1_ + 10; //bad guy's variable x position 
     this.xVelocity = 3;
     this.y = y_; //most be lower y value
@@ -310,7 +323,6 @@ class RectBadGuy {
   }
 
   //Class Methods
-
   display() {
     push();
     stroke(this.r, this.g, this.b);
@@ -331,27 +343,66 @@ class RectBadGuy {
     this.x += this.xVelocity;
   }
 
-  // //get the top left square vertex (SV) x pos
-  // getSVX1() {
-  //   return this.x;
-  // }
+  getVertices() {
+    return 6;
+  }
 
-  // //get the top left square vertex (SV) x pos
-  // getSVY1() {
-  //   return this.y;
-  // }
+  //CLASS METHODS BELOW return vertices locations for collision check
+  //starting with top left rect corner and working clockwise
 
-  // getSVX2() {
+  //get the top left square vertex (SV) x pos
+  getSVX1() {
+    return this.x;
+  }
 
-  // }
+  //get the top left square vertex (SV) y pos
+  getSVY1() {
+    return this.y;
+  }
 
+  //get top right square vertex (SV) x pos
+  getSVX2() {
+    return this.x + this.w;
+  }
 
-  // getSVY2() {
+  //get top right square vertex (SV) y pos
+  getSVY2() {
+    return this.y;
+  }
 
-  // }
+  //get the right triangle's vertex (TV) x pos that doesnt contact rect
+  getTVX1() {
+    return this.x + this.w + 10;
+  }
 
-  // getS
+  //get the right triangle's vertex (TV) y pos that doesnt contact rect
+  getTVY1() {
+    return this.y + this.h / 2;
+  }
 
+  getSVX3() {
+    return this.x + this.w;
+  }
+
+  getSVY3() {
+    return this.y + this.h;
+  }
+
+  getSVX4() {
+    return this.x;
+  }
+
+  getSVY4() {
+    return this.y + this.h;
+  }
+
+  getTVX2() {
+    return this.x - 10;
+  }
+
+  getTVY2() {
+    this.y + this.h / 2;
+  }
 }
 
 // platform object for level building
