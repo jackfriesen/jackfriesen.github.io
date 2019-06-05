@@ -4,13 +4,18 @@
 
 //TO DO
 //
-//make hero die when touching bad guy
-//- in bad guy class make 12 class methods to return 6 x,y pairs of the rectbadguys vertices for collision detection
-//-for bad guy collision checker, make a bunch of if statements for diff types of polygons
-//-ex: have a function for rectbadguy called getVertices which returns 6 cos 6 vertices. then in the collision checker have if(getVertices) { hitBad = RectPoly}
+//make doors
 //
+//make level variable that tracks the level user is on in draw (only one respawning varibale needed!) make a draw loop like below:
 //
-//make level variable that tracks the level user is on so computer knows which respawn function to call
+//function draw () {
+//   if(level === 0) {
+//    tutorial();
+//  }
+//   if(level === 1) {
+//      levelOne();
+//  }
+//}
 
 
 
@@ -23,6 +28,7 @@ let count = 0; //just a var for checking console printing, can be deleted when p
 let myFont;
 let enemies;
 let respawning = true;
+let poly;
 
 
 //hero animation vars
@@ -49,15 +55,13 @@ function draw() {
   hero();
   deathCheck();
   collisionCheck();
-
-  //  print(enemies[0].getSVX2());
 }
 
 //checks for collisions between hero and environs
 function collisionCheck() {
   //loop through platforms array and check if hero is touching any platforms
-  //then update state variables based on answer. "hit" is only used locally 
-  //to change "contactTop" which is used globally. contactTop can be found in 
+  //then update state variables based on answer. "hit" is only used locally
+  //to change "contactTop" which is used globally. contactTop can be found in
   //animateHero() and is used to stop hero from falling through floor and
   //also to make hero fall if there isnt a floor. it can also be found in
   //keyPressed() when the up arrow is pressed to allow the hero to jump
@@ -113,15 +117,24 @@ function deathCheck() {
     respawning = true;
   }
 
+  //hitting a bad guy
+  for (let i = 0; i < enemies.length; i++) {
+    //checking collisions with hex bad guys 
+    if (enemies[i].getVertices() === 6) { // we know its a hex bad guy because the number of vertices is 6
+      poly = [];
+      //create vectors of hexagon's x,y pairs to load into array, to coat bad guy in an invisible hitbox
+      poly.push(createVector(enemies[i].getHVX1(), enemies[i].getHVY1()));
+      poly.push(createVector(enemies[i].getHVX2(), enemies[i].getHVY2()));
+      poly.push(createVector(enemies[i].getHVX3(), enemies[i].getHVY3()));
+      poly.push(createVector(enemies[i].getHVX4(), enemies[i].getHVY4()));
+      poly.push(createVector(enemies[i].getHVX5(), enemies[i].getHVY5()));
+      poly.push(createVector(enemies[i].getHVX6(), enemies[i].getHVY6()));
 
-  // print(enemies.length);
-  // print(enemies[0]);
-  for (let j = 0; j < enemies.length; j++) {
-    //check rect bad guys collision
-    if (enemies[j].getVertices() === 6) {
-      print(rectX, rectY, rectW, rectH, enemies[j].getSVX1()); //KEEP ADDING MORE VERTICES FUNCTIONS TILL I FIND THE BREAK
-      //hitBad = collideRectPoly(rectX, rectY, rectW, rectH, enemies[j].getSVX1(), enemies[j].getSVY1(), enemies[j].getSVX2(), enemies[j].getSVY2(), enemies[j].getTVX1(), enemies[j].getTVY1(), enemies[j].getSVX3(), enemies[j].getSVY3(), enemies[j].getSVX4(), enemies[j].getSVY4().enemies[j].getTVX2(), enemies[j].getTVY2());
-      //print(hitBad);
+      hitBad = collideRectPoly(rectX, rectY, rectW, rectH, poly);
+
+      if (hitBad) {
+        respawning = true;
+      }
     }
   }
 }
@@ -258,7 +271,7 @@ function tutorialEnemies() {
 //reload and initiate enemies on tutorial level
 function tutorialLoadEnemies() {
   enemies = [];
-  enemies.push(new RectBadGuy(width / 1.7 + 170, height - 35 - 32, width - 60, 40, 32, 75, 0, 130));
+  enemies.push(new HexBadGuy(width / 1.7 + 170, height - 35 - 32, width - 60, 40, 32, 75, 0, 130));
 }
 
 //displays instructions on screen for user to learn to play game
@@ -307,12 +320,12 @@ function instructions() {
 //**************************************************************************************************************************************************************************//
 
 //makes a basic bad guy
-class RectBadGuy {
+class HexBadGuy {
   //Constructor and Class Properties
   constructor(xR1_, y_, xR2_, w_, h_, r_, g_, b_) {
     this.xRangeLeft = xR1_; //must be leftmost x value in movement range
     this.xRangeRight = xR2_; //must be rightmost x value in movement range
-    this.x = xR1_ + 10; //bad guy's variable x position 
+    this.x = xR1_ + 10; //bad guy's variable x position
     this.xVelocity = 3;
     this.y = y_; //most be lower y value
     this.w = w_;
@@ -325,11 +338,16 @@ class RectBadGuy {
   //Class Methods
   display() {
     push();
-    stroke(this.r, this.g, this.b);
+    noStroke();
     fill(this.r, this.g, this.b);
-    rect(this.x, this.y, this.w, this.h);
-    triangle(this.x - 10, this.y + this.h / 2, this.x, this.y, this.x, this.y + this.h);
-    triangle(this.x + this.w + 10, this.y + this.h / 2, this.x + this.w, this.y, this.x + this.w, this.y + this.h);
+    beginShape();
+    vertex(this.x, this.y);
+    vertex(this.x + this.w, this.y);
+    vertex(this.x + this.w + 10, this.y + this.h / 2);
+    vertex(this.x + this.w, this.y + this.h);
+    vertex(this.x, this.y + this.h);
+    vertex(this.x - 10, this.y + this.h / 2);
+    endShape();
     pop();
   }
 
@@ -351,57 +369,57 @@ class RectBadGuy {
   //starting with top left rect corner and working clockwise
 
   //get the top left square vertex (SV) x pos
-  getSVX1() {
+  getHVX1() {
     return this.x;
   }
 
   //get the top left square vertex (SV) y pos
-  getSVY1() {
+  getHVY1() {
     return this.y;
   }
 
   //get top right square vertex (SV) x pos
-  getSVX2() {
+  getHVX2() {
     return this.x + this.w;
   }
 
   //get top right square vertex (SV) y pos
-  getSVY2() {
+  getHVY2() {
     return this.y;
   }
 
   //get the right triangle's vertex (TV) x pos that doesnt contact rect
-  getTVX1() {
+  getHVX3() {
     return this.x + this.w + 10;
   }
 
   //get the right triangle's vertex (TV) y pos that doesnt contact rect
-  getTVY1() {
+  getHVY3() {
     return this.y + this.h / 2;
   }
 
-  getSVX3() {
+  getHVX4() {
     return this.x + this.w;
   }
 
-  getSVY3() {
+  getHVY4() {
     return this.y + this.h;
   }
 
-  getSVX4() {
+  getHVX5() {
     return this.x;
   }
 
-  getSVY4() {
+  getHVY5() {
     return this.y + this.h;
   }
 
-  getTVX2() {
+  getHVX6() {
     return this.x - 10;
   }
 
-  getTVY2() {
-    this.y + this.h / 2;
+  getHVY6() {
+    return this.y + this.h / 2;
   }
 }
 
@@ -441,3 +459,4 @@ class Platform {
 }
 
 //************************************************************************************************************************************************************************//
+
