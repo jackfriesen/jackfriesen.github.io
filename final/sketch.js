@@ -258,13 +258,20 @@ function instructions() {
   textFont(myFont);
   textAlign(CENTER);
 
+  text("door", width / 1.3, height - 180);
+
   //"this is you" and arrow
   text("This is you", width / 15, height - 180);
   line(width / 25, height - 165, width / 18, height - 115);
   triangle(width / 20, height - 110, width / 17, height - 120, width / 17, height - 100);
 
   //watch out for bad guys
-  text("Watch out for bad guys", width / 1.3, height - 180);
+  text("Avoid bad guys", width / 2.1, height - 50);
+  triangle(width / 1.8 + 5, height - 57.5, width / 1.8 - 10, height - 65, width / 1.8 - 10, height - 50);
+
+
+  //enter the door
+  //text("Enter for next level", width / 1.3, height - 300);
 
   //use the arrow keys to move" and buttons
   text("Use the arrow keys to move", width / 3, height - 180);
