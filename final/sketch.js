@@ -33,7 +33,8 @@ let count = 0; //just a var for checking console printing, can be deleted when p
 let myFont;
 let enemies;
 let respawning = true;
-let poly;
+let poly; //bad guy hitbox vertices array
+let door;
 
 
 //hero animation vars
@@ -65,14 +66,13 @@ function draw() {
 //checks for collisions between hero and environs
 function collisionCheck() {
   //loop through platforms array and check if hero is touching any platforms
-  //then update state variables based on answer. "hit" is only used locally
-  //to change "contactTop" which is used globally. contactTop can be found in
-  //animateHero() and is used to stop hero from falling through floor and
-  //also to make hero fall if there isnt a floor. it can also be found in
+  //then update state variables based on answer. all variants of the variable "hit" are only used locally
+  //to change all variants of the variable "contact" which is used globally. contact can be found in
+  //animateHero() and is used to allow hero to interact with platforms. it can also be found in
   //keyPressed() when the up arrow is pressed to allow the hero to jump
 
-  //checks top of platform
   for (let i = 0; i < platforms.length; i++) {
+    //checks top of platform
     //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
     hitTop = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY(), platforms[i].getW(), 1);
 
@@ -80,11 +80,8 @@ function collisionCheck() {
       contactTop = true;
       currPlatY = platforms[i].getY();
     }
-  }
 
-  // checks bottom of platform
-  for (let i = 0; i < platforms.length; i++) {
-    //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
+    //checks collision w bottom of platform
     hitBottom = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY() + platforms[i].getH(), platforms[i].getW(), 1);
 
     if (hitBottom) {
@@ -92,20 +89,16 @@ function collisionCheck() {
       currPlatY = platforms[i].getY();
       currPlatH = platforms[i].getH();
     }
-  }
 
-  //checks left side of platform
-  for (let i = 0; i < platforms.length; i++) {
+    //check collision w left side of platform
     // - 1 values attatched to second hitbox y and h values to avoid top and bottom collisions
     hitLeft = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY() + 2, 1, platforms[i].getH() - 2);
 
     if (hitLeft) {
       contactLeft = true;
     }
-  }
 
-  //checks right side of platform
-  for (let i = 0; i < platforms.length; i++) {
+    //check collision w right side of platform
     //extra math is to move hitbox to right side of platform
     hitRight = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX() + platforms[i].getW(), platforms[i].getY() + 2, 1, platforms[i].getH() - 2);
 
@@ -246,6 +239,8 @@ function tutorial() {
   for (let i = 0; i < platforms.length; i++) {
     platforms[i].display();
   }
+
+  door.display();
 }
 
 //load tutorial environment into array
@@ -263,6 +258,8 @@ function loadTutorial() {
   platforms.push(new Platform(width / 1.7 + 150, height - 35, width - (width / 1.7 + 150), 15));
   platforms.push(new Platform(width / 1.3, height - 100, 200, 15));
   platforms.push(new Platform(width / 3, height - 100, 20, 75));
+
+  door = new Door(width / 1.3 + 100  , height - 100, rectW + 10, rectH + 10);
 }
 
 //show and animate enemies on tutorial level
@@ -288,8 +285,6 @@ function instructions() {
   textSize(30);
   textFont(myFont);
   textAlign(CENTER);
-
-  text("door", width / 1.3, height - 180);
 
   //"this is you" and arrow
   text("This is you", width / 15, height - 180);
@@ -460,6 +455,31 @@ class Platform {
 
   getY() {
     return this.y;
+  }
+}
+
+class Door {
+  //Constructor and Class Properties
+  constructor(x_, y_, w_, h_) {
+    this.x = x_;
+    this.y = y_;
+    this.w = w_;
+    this.h = h_;
+    this.xBuffer = 15;
+    this.yBuffer = 10;
+    this.roofBuffer = 40;
+  }
+
+  //Class Methods
+
+  display() {
+    push();
+    strokeWeight(10);
+    line(this.x - this.w / 2 - this.xBuffer, this.y, this.x - this.w / 2 - this.xBuffer, this.y - this.h - this.yBuffer);
+    line(this.x + this.w / 2 + this.xBuffer, this.y, this.x + this.w / 2 + this.xBuffer, this.y - this.h - this.yBuffer);
+    line(this.x - this.w / 2 - this.xBuffer, this.y - this.h - this.yBuffer, this.x, this.y - this.h - this.yBuffer - this.roofBuffer);
+    line(this.x + this.w / 2 + this.xBuffer, this.y - this.h - this.yBuffer, this.x, this.y - this.h - this.yBuffer - this.roofBuffer);
+    pop();
   }
 }
 
