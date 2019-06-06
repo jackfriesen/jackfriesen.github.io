@@ -119,9 +119,9 @@ function deathCheck() {
   for (let j = 0; j < enemies.length; j++) {
     //check rect bad guys collision
     if (enemies[j].getVertices() === 6) {
-      print(rectX, rectY, rectW, rectH, enemies[j].getSVX1()); //KEEP ADDING MORE VERTICES FUNCTIONS TILL I FIND THE BREAK
-      //hitBad = collideRectPoly(rectX, rectY, rectW, rectH, enemies[j].getSVX1(), enemies[j].getSVY1(), enemies[j].getSVX2(), enemies[j].getSVY2(), enemies[j].getTVX1(), enemies[j].getTVY1(), enemies[j].getSVX3(), enemies[j].getSVY3(), enemies[j].getSVX4(), enemies[j].getSVY4().enemies[j].getTVX2(), enemies[j].getTVY2());
-      //print(hitBad);
+      print(enemies[j].getTVY1()); //KEEP ADDING MORE VERTICES FUNCTIONS TILL I FIND THE BREAK
+      hitBad = collideRectPoly(rectX, rectY, rectW, rectH, enemies[j].getSVX1(), enemies[j].getSVY1(), enemies[j].getSVX2(), enemies[j].getSVY2(), enemies[j].getTVX1(), enemies[j].getTVY1(), enemies[j].getSVX3(), enemies[j].getSVY3(), enemies[j].getSVX4(), enemies[j].getSVY4(), enemies[j].getTVX2(), enemies[j].getTVY1());
+      print(hitBad);
     }
   }
 }
