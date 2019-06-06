@@ -16,6 +16,11 @@
 //      levelOne();
 //  }
 //}
+//
+//make a blackout effect for a tunnel level!
+//-have a 2d array that divides the screen into a grid of v small squares like 1000 x 1000 and its all small black squares.
+//make background a torchlight color and have the small black squares disappear in a ring around the hero as he moves so its like an 
+//illumination effect
 
 
 
