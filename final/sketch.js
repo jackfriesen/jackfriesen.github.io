@@ -4,98 +4,35 @@
 
 //TO DO
 //
-//make doors
+//FIX GLITCH BY JUMPING UNDER DOOR
 //
-//make level variable that tracks the level user is on in draw (only one respawning varibale needed!) make a draw loop like below:
-//
-//function draw () {
-//   if(level === 0) {
-//    tutorial();
-//  }
-//   if(level === 1) {
-//      levelOne();
-//  }
-//}
+//make level transition animation
+//in draw: if (level === 0.5)
 //
 //make a blackout effect for a tunnel level!
 //-have a 2d array that divides the screen into a grid of v small squares like 1000 x 1000 and its all small black squares.
 //make background a torchlight color and have the small black squares disappear in a ring around the hero as he moves so its like an 
 //illumination effect
+//
+//try different custom font to see if that slows it down
 
 
 
 
 
 
-
-
-
-
-
-
-//WHY DOES FONT SLOW MY GAME DOWN???????????????????????????????????????????????????????????????????????
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, currPlatY, currPlatH, hitBad, contactBad; //collision checking variables
+let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, currPlatY, currPlatH, hitBad, contactBad, hitDoor; //collision checking variables
 let platforms;
 let count = 0; //just a var for checking console printing, can be deleted when program is complete
 let myFont;
 let enemies;
 let respawning = true;
-let poly; //bad guy hitbox vertices array
+let enemyVertices; //bad guy hitbox vertices array
+let doorVertices; //door hitbox vertices array
 let door;
+let halt = false;
+let level = 0;
+
 
 
 //hero animation vars
@@ -118,7 +55,13 @@ function setup() {
 
 function draw() {
   background(255);
-  tutorial();
+  if(level === 0) {
+    tutorial();
+  }
+  if(level === 1) {
+    levelOne();
+  }
+  
   hero();
   deathCheck();
   collisionCheck();
@@ -135,7 +78,7 @@ function collisionCheck() {
   for (let i = 0; i < platforms.length; i++) {
     //checks top of platform
     //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
-    hitTop = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY(), platforms[i].getW(), 1);
+    hitTop = collideRectRect(rectX, rectY + yVelocity, rectW, rectH, platforms[i].getX(), platforms[i].getY(), platforms[i].getW(), 1);
 
     if (hitTop) {
       contactTop = true;
@@ -143,7 +86,7 @@ function collisionCheck() {
     }
 
     //checks collision w bottom of platform
-    hitBottom = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY() + platforms[i].getH(), platforms[i].getW(), 1);
+    hitBottom = collideRectRect(rectX, rectY + yVelocity, rectW, rectH, platforms[i].getX(), platforms[i].getY() + platforms[i].getH(), platforms[i].getW(), 1);
 
     if (hitBottom) {
       contactBottom = true;
@@ -167,6 +110,23 @@ function collisionCheck() {
       contactRight = true;
     }
   }
+
+  //check collision with doors
+  doorVertices = [];
+
+  doorVertices.push(createVector(door.getDVX1(), door.getDVY1()));
+  doorVertices.push(createVector(door.getDVX2(), door.getDVY2()));
+  doorVertices.push(createVector(door.getDVX3(), door.getDVY3()));
+  doorVertices.push(createVector(door.getDVX4(), door.getDVY4()));
+  doorVertices.push(createVector(door.getDVX5(), door.getDVY5()));
+
+  hitDoor = collideRectPoly(rectX, rectY, rectW, rectH, doorVertices);
+
+  if(hitDoor) {
+    level ++;
+    respawning = true;
+  }
+
 }
 
 //check if hero has done something to die and needs to respawn
@@ -180,16 +140,16 @@ function deathCheck() {
   for (let i = 0; i < enemies.length; i++) {
     //checking collisions with hex bad guys 
     if (enemies[i].getVertices() === 6) { // we know its a hex bad guy because the number of vertices is 6
-      poly = [];
+      enemyVertices = [];
       //create vectors of hexagon's x,y pairs to load into array, to coat bad guy in an invisible hitbox
-      poly.push(createVector(enemies[i].getHVX1(), enemies[i].getHVY1()));
-      poly.push(createVector(enemies[i].getHVX2(), enemies[i].getHVY2()));
-      poly.push(createVector(enemies[i].getHVX3(), enemies[i].getHVY3()));
-      poly.push(createVector(enemies[i].getHVX4(), enemies[i].getHVY4()));
-      poly.push(createVector(enemies[i].getHVX5(), enemies[i].getHVY5()));
-      poly.push(createVector(enemies[i].getHVX6(), enemies[i].getHVY6()));
+      enemyVertices.push(createVector(enemies[i].getHVX1(), enemies[i].getHVY1()));
+      enemyVertices.push(createVector(enemies[i].getHVX2(), enemies[i].getHVY2()));
+      enemyVertices.push(createVector(enemies[i].getHVX3(), enemies[i].getHVY3()));
+      enemyVertices.push(createVector(enemies[i].getHVX4(), enemies[i].getHVY4()));
+      enemyVertices.push(createVector(enemies[i].getHVX5(), enemies[i].getHVY5()));
+      enemyVertices.push(createVector(enemies[i].getHVX6(), enemies[i].getHVY6()));
 
-      hitBad = collideRectPoly(rectX, rectY, rectW, rectH, poly);
+      hitBad = collideRectPoly(rectX, rectY, rectW, rectH, enemyVertices);
 
       if (hitBad) {
         respawning = true;
@@ -201,6 +161,7 @@ function deathCheck() {
 //if key released change state to 0 so nothing happens
 function keyReleased() {
   state = 0;
+  halt = false;
 }
 
 //receives movement commands and changes state variable accordingly
@@ -279,6 +240,27 @@ function hero() {
   }
 }
 
+function levelOne() {
+  if(respawning) {
+    loadLevelOne();
+    respawning = false;
+  }
+
+  for(let i = 0; i < platforms.length; i ++) {
+    platforms[i].display();
+  }
+}
+
+function loadLevelOne() {
+  rectX = 100;
+  rectY = 100;
+  xVelocity = 0;
+  yVelocity = 0;
+
+  platforms = [];
+
+  platforms.push(new Platform(50, 150, 100, 100));
+}
 
 
 
@@ -320,7 +302,7 @@ function loadTutorial() {
   platforms.push(new Platform(width / 1.3, height - 100, 200, 15));
   platforms.push(new Platform(width / 3, height - 100, 20, 75));
 
-  door = new Door(width / 1.3 + 100  , height - 100, rectW + 10, rectH + 10);
+  door = new Door(width / 1.3 + 100, height - 100, rectW + 10, rectH + 10);
 }
 
 //show and animate enemies on tutorial level
@@ -402,6 +384,7 @@ class HexBadGuy {
     //body
     push();
     fill(75, 0, 130);
+    noStroke();
     beginShape();
     vertex(this.x, this.y);
     vertex(this.x + this.w, this.y);
@@ -552,6 +535,7 @@ class Door {
   display() {
     push();
     fill(this.count, 0, 0);
+    stroke(0);
     strokeWeight(8);
     beginShape();
     vertex(this.x - this.w / 2 - this.xBuffer, this.y);
@@ -562,15 +546,65 @@ class Door {
     endShape();
     pop();
 
-    if(this.count < 150) {
+    if (this.count < 150) {
       this.countSpeed *= -1;
     }
-    else if(this.count > 255) {
+    else if (this.count > 255) {
       this.countSpeed *= -1;
     }
-
     this.count += this.countSpeed;
   }
+
+  //return bottom left vertex x pos
+  getDVX1() {
+    return this.x - this.w / 2 - this.xBuffer;
+  }
+
+  //bottom left y pos
+  getDVY1() {
+    return this.y;
+  }
+
+  //top left x pos
+  getDVX2() {
+    return this.x - this.w / 2 - this.xBuffer;
+  }
+
+  //top left y pos
+  getDVY2() {
+    return this.y - this.h - this.yBuffer;
+  }
+
+  //roof peak x pos
+  getDVX3() {
+    return this.x;
+  }
+
+  //roof peak y pos
+  getDVY3() {
+    return this.y - this.h - this.yBuffer - this.roofBuffer;
+  }
+
+  //top right x pos
+  getDVX4() {
+    return this.x + this.w / 2 + this.xBuffer;
+  }
+
+  //top right y pos
+  getDVY4() {
+    return this.y - this.h - this.yBuffer;
+  }
+
+  //bottom right x pos
+  getDVX5() {
+    return this.x + this.w / 2 + this.xBuffer;
+  }
+
+  //bottom right y pos
+  getDVY5() {
+    return this.y;
+  }
+
 }
 
 //************************************************************************************************************************************************************************//
