@@ -27,6 +27,67 @@
 
 
 
+
+
+
+
+
+
+//WHY DOES FONT SLOW MY GAME DOWN???????????????????????????????????????????????????????????????????????
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, currPlatY, currPlatH, hitBad, contactBad; //collision checking variables
 let platforms;
 let count = 0; //just a var for checking console printing, can be deleted when program is complete
@@ -108,7 +169,7 @@ function collisionCheck() {
   }
 }
 
-//check if hero has died and needs to respawn
+//check if hero has done something to die and needs to respawn
 function deathCheck() {
   //falling off the world
   if (rectY > height) {
@@ -232,7 +293,7 @@ function tutorial() {
     tutorialLoadEnemies();
     respawning = false;
   }
-  instructions();
+  //instructions();
   tutorialEnemies();
 
   //display platforms
@@ -297,7 +358,9 @@ function instructions() {
 
 
   //enter the door
-  //text("Enter for next level", width / 1.3, height - 300);
+  text("Enter for next level", width / 1.3, height - 300);
+  line(width / 1.3, height - 275, width / 1.3 + 50, height - 225);
+  triangle(width / 1.3 + 60, height - 210, width / 1.3 + 40, height - 220, width / 1.3 + 55, height - 235);
 
   //use the arrow keys to move" and buttons
   text("Use the arrow keys to move", width / 3, height - 180);
@@ -468,18 +531,33 @@ class Door {
     this.xBuffer = 15;
     this.yBuffer = 10;
     this.roofBuffer = 40;
+    this.count = 255;
+    this.countSpeed = -5;
   }
 
   //Class Methods
 
   display() {
     push();
-    strokeWeight(10);
-    line(this.x - this.w / 2 - this.xBuffer, this.y, this.x - this.w / 2 - this.xBuffer, this.y - this.h - this.yBuffer);
-    line(this.x + this.w / 2 + this.xBuffer, this.y, this.x + this.w / 2 + this.xBuffer, this.y - this.h - this.yBuffer);
-    line(this.x - this.w / 2 - this.xBuffer, this.y - this.h - this.yBuffer, this.x, this.y - this.h - this.yBuffer - this.roofBuffer);
-    line(this.x + this.w / 2 + this.xBuffer, this.y - this.h - this.yBuffer, this.x, this.y - this.h - this.yBuffer - this.roofBuffer);
+    fill(this.count, 0, 0);
+    strokeWeight(8);
+    beginShape();
+    vertex(this.x - this.w / 2 - this.xBuffer, this.y);
+    vertex(this.x - this.w / 2 - this.xBuffer, this.y - this.h - this.yBuffer);
+    vertex(this.x, this.y - this.h - this.yBuffer - this.roofBuffer);
+    vertex(this.x + this.w / 2 + this.xBuffer, this.y - this.h - this.yBuffer);
+    vertex(this.x + this.w / 2 + this.xBuffer, this.y);
+    endShape();
     pop();
+
+    if(this.count < 150) {
+      this.countSpeed *= -1;
+    }
+    else if(this.count > 255) {
+      this.countSpeed *= -1;
+    }
+
+    this.count += this.countSpeed;
   }
 }
 
