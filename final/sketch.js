@@ -263,7 +263,7 @@ function hero() {
   }
 
   //check if running into left side of a platform
-  if (contactLeft) {
+  if (contactLeft && contactTop === false) {
     xVelocity = 0;
     rectX -= 1;
     jumping = true; //need this so cant run into walls and teleport to their top
@@ -334,7 +334,9 @@ function tutorialEnemies() {
 //reload and initiate enemies on tutorial level
 function tutorialLoadEnemies() {
   enemies = [];
-  enemies.push(new HexBadGuy(width / 1.7 + 170, height - 35 - 32, width - 60, 40, 32, 75, 0, 130));
+  //enemies.push(new HexBadGuy(width / 1.7 + 170, height - 35 - 32, width - 60, 40, 32, 65, 0, 120));
+  enemies.push(new HexBadGuy(width / 1.7 + 170, height - 35 - 32, width - 60, 40, 32));
+
 }
 
 //displays instructions on screen for user to learn to play game
@@ -385,7 +387,7 @@ function instructions() {
 //makes a basic bad guy
 class HexBadGuy {
   //Constructor and Class Properties
-  constructor(xR1_, y_, xR2_, w_, h_, r_, g_, b_) {
+  constructor(xR1_, y_, xR2_, w_, h_) {
     this.xRangeLeft = xR1_; //must be leftmost x value in movement range
     this.xRangeRight = xR2_; //must be rightmost x value in movement range
     this.x = xR1_ + 10; //bad guy's variable x position
@@ -393,24 +395,34 @@ class HexBadGuy {
     this.y = y_; //most be lower y value
     this.w = w_;
     this.h = h_;
-    this.r = r_;
-    this.g = g_;
-    this.b = b_;
   }
 
   //Class Methods
   display() {
+    //body
     push();
-    noStroke();
-    fill(this.r, this.g, this.b);
+    fill(75, 0, 130);
     beginShape();
     vertex(this.x, this.y);
     vertex(this.x + this.w, this.y);
-    vertex(this.x + this.w + 10, this.y + this.h / 2);
+    vertex(this.x + this.w + 9, this.y + this.h / 2);
     vertex(this.x + this.w, this.y + this.h);
     vertex(this.x, this.y + this.h);
-    vertex(this.x - 10, this.y + this.h / 2);
+    vertex(this.x - 9, this.y + this.h / 2);
     endShape();
+
+    //yellow highlight
+    // beginShape();
+    // strokeWeight(1);
+    // stroke(255, 255, 0);
+    // vertex(this.x + 3, this.y + 3);
+    // vertex(this.x + this.w - 3, this.y + 3);
+    // vertex(this.x + this.w + 5, this.y + this.h / 2);
+    // vertex(this.x + this.w - 3, this.y + this.h - 3);
+    // vertex(this.x + 3, this.y + this.h - 3);
+    // vertex(this.x - 5, this.y + this.h / 2);
+    // vertex(this.x + 3, this.y + 3);
+    // endShape();
     pop();
   }
 
