@@ -55,13 +55,13 @@ function setup() {
 
 function draw() {
   background(255);
-  if(level === 0) {
+  if (level === 0) {
     tutorial();
   }
-  if(level === 1) {
+  if (level === 1) {
     levelOne();
   }
-  
+
   hero();
   deathCheck();
   collisionCheck();
@@ -70,63 +70,58 @@ function draw() {
 //checks for collisions between hero and environs
 function collisionCheck() {
   //loop through platforms array and check if hero is touching any platforms
-  //then update state variables based on answer. all variants of the variable "hit" are only used locally
-  //to change all variants of the variable "contact" which is used globally. contact can be found in
-  //animateHero() and is used to allow hero to interact with platforms. it can also be found in
+  //then update state variables based on answer. "hit" is only used locally 
+  //to change "contactTop" which is used globally. contactTop can be found in 
+  //animateHero() and is used to stop hero from falling through floor and
+  //also to make hero fall if there isnt a floor. it can also be found in
   //keyPressed() when the up arrow is pressed to allow the hero to jump
 
-  for (let i = 0; i < platforms.length; i++) {
-    //checks top of platform
-    //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
-    hitTop = collideRectRect(rectX, rectY + yVelocity, rectW, rectH, platforms[i].getX(), platforms[i].getY(), platforms[i].getW(), 1);
+  //check collision with doors
+  doorVertices = [];
 
+  doorVertices.push(createVector(door.getX(), door.getY() - rectH));
+  doorVertices.push(createVector(door.getX(), door.getY()));
+
+
+  hitDoor = collideRectPoly(rectX, rectY, rectW, rectH, doorVertices);
+
+  if (hitDoor) {
+    level++;
+    respawning = true;
+  }
+
+  //checks platform collisions
+  for (let i = 0; i < platforms.length; i++) {
+    //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
+    hitTop = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY(), platforms[i].getW(), 1);
     if (hitTop) {
       contactTop = true;
       currPlatY = platforms[i].getY();
     }
 
-    //checks collision w bottom of platform
-    hitBottom = collideRectRect(rectX, rectY + yVelocity, rectW, rectH, platforms[i].getX(), platforms[i].getY() + platforms[i].getH(), platforms[i].getW(), 1);
 
+    //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
+    hitBottom = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY() + platforms[i].getH(), platforms[i].getW(), 1);
     if (hitBottom) {
       contactBottom = true;
       currPlatY = platforms[i].getY();
       currPlatH = platforms[i].getH();
     }
 
-    //check collision w left side of platform
+
     // - 1 values attatched to second hitbox y and h values to avoid top and bottom collisions
     hitLeft = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY() + 2, 1, platforms[i].getH() - 2);
-
     if (hitLeft) {
       contactLeft = true;
     }
 
-    //check collision w right side of platform
+
     //extra math is to move hitbox to right side of platform
     hitRight = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX() + platforms[i].getW(), platforms[i].getY() + 2, 1, platforms[i].getH() - 2);
-
     if (hitRight) {
       contactRight = true;
     }
   }
-
-  //check collision with doors
-  doorVertices = [];
-
-  doorVertices.push(createVector(door.getDVX1(), door.getDVY1()));
-  doorVertices.push(createVector(door.getDVX2(), door.getDVY2()));
-  doorVertices.push(createVector(door.getDVX3(), door.getDVY3()));
-  doorVertices.push(createVector(door.getDVX4(), door.getDVY4()));
-  doorVertices.push(createVector(door.getDVX5(), door.getDVY5()));
-
-  hitDoor = collideRectPoly(rectX, rectY, rectW, rectH, doorVertices);
-
-  if(hitDoor) {
-    level ++;
-    respawning = true;
-  }
-
 }
 
 //check if hero has done something to die and needs to respawn
@@ -241,12 +236,12 @@ function hero() {
 }
 
 function levelOne() {
-  if(respawning) {
+  if (respawning) {
     loadLevelOne();
     respawning = false;
   }
 
-  for(let i = 0; i < platforms.length; i ++) {
+  for (let i = 0; i < platforms.length; i++) {
     platforms[i].display();
   }
 }
@@ -535,7 +530,6 @@ class Door {
   display() {
     push();
     fill(this.count, 0, 0);
-    stroke(0);
     strokeWeight(8);
     beginShape();
     vertex(this.x - this.w / 2 - this.xBuffer, this.y);
@@ -555,56 +549,13 @@ class Door {
     this.count += this.countSpeed;
   }
 
-  //return bottom left vertex x pos
-  getDVX1() {
-    return this.x - this.w / 2 - this.xBuffer;
-  }
-
-  //bottom left y pos
-  getDVY1() {
-    return this.y;
-  }
-
-  //top left x pos
-  getDVX2() {
-    return this.x - this.w / 2 - this.xBuffer;
-  }
-
-  //top left y pos
-  getDVY2() {
-    return this.y - this.h - this.yBuffer;
-  }
-
-  //roof peak x pos
-  getDVX3() {
+  getX() {
     return this.x;
   }
 
-  //roof peak y pos
-  getDVY3() {
-    return this.y - this.h - this.yBuffer - this.roofBuffer;
-  }
-
-  //top right x pos
-  getDVX4() {
-    return this.x + this.w / 2 + this.xBuffer;
-  }
-
-  //top right y pos
-  getDVY4() {
-    return this.y - this.h - this.yBuffer;
-  }
-
-  //bottom right x pos
-  getDVX5() {
-    return this.x + this.w / 2 + this.xBuffer;
-  }
-
-  //bottom right y pos
-  getDVY5() {
+  getY() {
     return this.y;
   }
-
 }
 
 //************************************************************************************************************************************************************************//
