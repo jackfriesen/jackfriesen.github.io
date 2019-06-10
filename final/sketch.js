@@ -18,11 +18,9 @@
 let level = 0;
 let respawning = true;
 let fade = 255;
-let transitioning = false;
 
 let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, hitBad, hitDoor, hitTrap; //collision checking variables
 let currPlatY, currPlatH;
-let count = 0; //just a var for checking console printing, can be deleted when program is complete
 let myFont;
 let platforms = [];
 let enemies = [];
@@ -64,8 +62,6 @@ function draw() {
   deathCheck();
   collisionCheck();
 }
-
-
 
 //checks for collisions between hero and environs
 function collisionCheck() {
@@ -436,14 +432,14 @@ class Spike {
 //makes a basic bad guy
 class HexBadGuy {
   //Constructor and Class Properties
-  constructor(xR1_, y_, xR2_, w_, h_) {
+  constructor(xR1_, y_, xR2_) {
     this.xRangeLeft = xR1_; //must be leftmost x value in movement range
     this.xRangeRight = xR2_; //must be rightmost x value in movement range
     this.x = xR1_ + 10; //bad guy's variable x position
     this.xVelocity = 3;
     this.y = y_; //most be lower y value
-    this.w = w_;
-    this.h = h_;
+    this.w = 40;
+    this.h = 32;
   }
 
   //Class Methods
@@ -460,19 +456,6 @@ class HexBadGuy {
     vertex(this.x, this.y + this.h);
     vertex(this.x - 9, this.y + this.h / 2);
     endShape();
-
-    //yellow highlight
-    // beginShape();
-    // strokeWeight(1);
-    // stroke(255, 255, 0, fade);
-    // vertex(this.x + 3, this.y + 3);
-    // vertex(this.x + this.w - 3, this.y + 3);
-    // vertex(this.x + this.w + 5, this.y + this.h / 2);
-    // vertex(this.x + this.w - 3, this.y + this.h - 3);
-    // vertex(this.x + 3, this.y + this.h - 3);
-    // vertex(this.x - 5, this.y + this.h / 2);
-    // vertex(this.x + 3, this.y + 3);
-    // endShape();
     pop();
   }
 
@@ -548,7 +531,7 @@ class HexBadGuy {
   }
 }
 
-// platform object for level building
+//platform object for level building
 class Platform {
   //Constructor and Class Properties
   constructor(x_, y_, w_, h_) {
@@ -584,6 +567,7 @@ class Platform {
   }
 }
 
+//creates door for hero to reach to progress to next level
 class Door {
   //Constructor and Class Properties
   constructor(x_, y_) {
