@@ -343,7 +343,6 @@ function instructions() {
   push();
   fill(0, fade);
   strokeWeight(3);
-  stroke(0, fade);
   textSize(30);
   textFont(myFont);
   textAlign(CENTER);
