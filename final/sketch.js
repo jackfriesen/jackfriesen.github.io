@@ -4,8 +4,6 @@
 
 //TO DO
 //
-//FIX GLITCH BY JUMPING UNDER DOOR
-//
 //make level transition animation
 //in draw: if (level === 0.5)
 //
@@ -17,23 +15,22 @@
 //try different custom font to see if that slows it down
 
 
+let level = 0;
+let respawning = true;
+let fade = 255;
+let transitioning = false;
 
-
-
-
-let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, currPlatY, currPlatH, hitBad, contactBad, hitDoor; //collision checking variables
-let platforms;
+let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, hitBad, hitDoor, hitTrap; //collision checking variables
+let currPlatY, currPlatH;
 let count = 0; //just a var for checking console printing, can be deleted when program is complete
 let myFont;
-let enemies;
-let respawning = true;
-let enemyVertices; //bad guy hitbox vertices array
-let doorVertices; //door hitbox vertices array
+let platforms = [];
+let enemies = [];
+let enemyVertices = []; //bad guy hitbox vertices array
+let spikes = [];
+let spikeVertices = [];
+let doorVertices = []; //door hitbox vertices array
 let door;
-let halt = false;
-let level = 0;
-
-
 
 //hero animation vars
 let jumping = true;
@@ -43,6 +40,8 @@ let rectX, rectY;
 let xVelocity = 0;
 let yVelocity = 0;
 let state = 0; // 0 = idle, 1 = right, 2 = left
+
+
 
 //load game font
 function preload() {
@@ -61,11 +60,12 @@ function draw() {
   if (level === 1) {
     levelOne();
   }
-
   hero();
   deathCheck();
   collisionCheck();
 }
+
+
 
 //checks for collisions between hero and environs
 function collisionCheck() {
@@ -86,7 +86,7 @@ function collisionCheck() {
   hitDoor = collideRectPoly(rectX, rectY, rectW, rectH, doorVertices);
 
   if (hitDoor) {
-    level++;
+    level ++;
     respawning = true;
   }
 
@@ -151,12 +151,26 @@ function deathCheck() {
       }
     }
   }
+
+  //hitting spikes
+  for (let i = 0; i < spikes.length; i++) {
+    spikeVertices = [];
+    //create vectors of spike's x,y pairs to load into array, to coat the spike in an invisible hitbox
+    spikeVertices.push(createVector(spikes[i].getTVX1(), spikes[i].getTVY1()));
+    spikeVertices.push(createVector(spikes[i].getTVX2(), spikes[i].getTVY2()));
+    spikeVertices.push(createVector(spikes[i].getTVX3(), spikes[i].getTVY3()));
+
+    hitTrap = collideRectPoly(rectX, rectY, rectW, rectH, spikeVertices);
+
+    if (hitTrap) {
+      respawning = true;
+    }
+  }
 }
 
 //if key released change state to 0 so nothing happens
 function keyReleased() {
   state = 0;
-  halt = false;
 }
 
 //receives movement commands and changes state variable accordingly
@@ -171,7 +185,7 @@ function keyPressed() {
   if (keyCode === UP_ARROW && jumping === false) {
     yVelocity -= 18;
     jumping = true;
-    contactTop = false;
+    contactTop = false; // needed to allow character to jump and not be teleported to top of platform
   }
 }
 
@@ -179,7 +193,7 @@ function keyPressed() {
 function hero() {
   //draw hero
   push();
-  fill(255, 0, 0);
+  fill(255, 0, 0, fade);
   noStroke();
   rect(rectX, rectY, rectW, rectH);
   pop();
@@ -239,11 +253,14 @@ function levelOne() {
   if (respawning) {
     loadLevelOne();
     respawning = false;
+    print(respawning);
   }
 
   for (let i = 0; i < platforms.length; i++) {
     platforms[i].display();
   }
+
+  door.display();
 }
 
 function loadLevelOne() {
@@ -255,6 +272,8 @@ function loadLevelOne() {
   platforms = [];
 
   platforms.push(new Platform(50, 150, 100, 100));
+
+  door = new Door(400, 400);
 }
 
 
@@ -278,6 +297,10 @@ function tutorial() {
     platforms[i].display();
   }
 
+  for (let i = 0; i < spikes.length; i++) {
+    spikes[i].display();
+  }
+
   door.display();
 }
 
@@ -297,7 +320,11 @@ function loadTutorial() {
   platforms.push(new Platform(width / 1.3, height - 100, 200, 15));
   platforms.push(new Platform(width / 3, height - 100, 20, 75));
 
-  door = new Door(width / 1.3 + 100, height - 100, rectW + 10, rectH + 10);
+  door = new Door(width / 1.3 + 100, height - 100);
+
+  spikes.push(new Spike(width / 4 - 45, height - 35));
+  spikes.push(new Spike(width / 4 - 15, height - 35));
+  spikes.push(new Spike(width / 4 - 30, height - 35));
 }
 
 //show and animate enemies on tutorial level
@@ -311,17 +338,16 @@ function tutorialEnemies() {
 //reload and initiate enemies on tutorial level
 function tutorialLoadEnemies() {
   enemies = [];
-  //enemies.push(new HexBadGuy(width / 1.7 + 170, height - 35 - 32, width - 60, 40, 32, 65, 0, 120));
   enemies.push(new HexBadGuy(width / 1.7 + 170, height - 35 - 32, width - 60, 40, 32));
-
 }
 
 //displays instructions on screen for user to learn to play game
 function instructions() {
   //instructions on bottom floor
   push();
-  fill(0);
+  fill(0, fade);
   strokeWeight(3);
+  stroke(0, fade);
   textSize(30);
   textFont(myFont);
   textAlign(CENTER);
@@ -346,7 +372,7 @@ function instructions() {
   rect(width / 3 - 50, height - 240, 30, 30);
   rect(width / 3 + 50, height - 240, 30, 30);
   rect(width / 3, height - 280, 30, 30);
-  fill(255);
+  fill(255, fade);
   triangle(width / 3 - 48, height - 225, width / 3 - 22, height - 238, width / 3 - 22, height - 212);
   triangle(width / 3 + 78, height - 225, width / 3 + 52, height - 238, width / 3 + 52, height - 212);
   triangle(width / 3 + 2, height - 252, width / 3 + 28, height - 252, width / 3 + 15, height - 278);
@@ -360,6 +386,52 @@ function instructions() {
 
 //CLASSES//
 //**************************************************************************************************************************************************************************//
+
+//creates a single spike to kill hero
+class Spike {
+  //constructor and class properties
+  constructor(x_, y_) {
+    this.x = x_;
+    this.y = y_;
+    this.w = 15;
+    this.h = 20;
+  }
+
+  //class methods
+
+  display() {
+    push();
+    fill(0, fade);
+    noStroke();
+    triangle(this.x - this.w / 2, this.y, this.x, this.y - this.h, this.x + this.w / 2, this.y);
+    pop();
+  }
+
+  //return left vertex x
+  getTVX1() {
+    return this.x - this.w / 2;
+  }
+
+  getTVY1() {
+    return this.y;
+  }
+
+  getTVX2() {
+    return this.x;
+  }
+
+  getTVY2() {
+    return this.y - this.h;
+  }
+
+  getTVX3() {
+    return this.x + this.w / 2;
+  }
+
+  getTVY3() {
+    return this.y;
+  }
+}
 
 //makes a basic bad guy
 class HexBadGuy {
@@ -378,7 +450,7 @@ class HexBadGuy {
   display() {
     //body
     push();
-    fill(75, 0, 130);
+    fill(75, 0, 130, fade);
     noStroke();
     beginShape();
     vertex(this.x, this.y);
@@ -392,7 +464,7 @@ class HexBadGuy {
     //yellow highlight
     // beginShape();
     // strokeWeight(1);
-    // stroke(255, 255, 0);
+    // stroke(255, 255, 0, fade);
     // vertex(this.x + 3, this.y + 3);
     // vertex(this.x + this.w - 3, this.y + 3);
     // vertex(this.x + this.w + 5, this.y + this.h / 2);
@@ -489,7 +561,8 @@ class Platform {
   //Class Methods
   display() {
     push();
-    fill(0);
+    fill(0, fade);
+    stroke(0, fade);
     rect(this.x, this.y, this.w, this.h);
     pop();
   }
@@ -513,11 +586,11 @@ class Platform {
 
 class Door {
   //Constructor and Class Properties
-  constructor(x_, y_, w_, h_) {
+  constructor(x_, y_) {
     this.x = x_;
     this.y = y_;
-    this.w = w_;
-    this.h = h_;
+    this.w = rectW + 10;
+    this.h = rectH + 10;
     this.xBuffer = 15;
     this.yBuffer = 10;
     this.roofBuffer = 40;
@@ -529,8 +602,9 @@ class Door {
 
   display() {
     push();
-    fill(this.count, 0, 0);
+    fill(this.count, 0, 0, fade);
     strokeWeight(8);
+    stroke(0, fade);
     beginShape();
     vertex(this.x - this.w / 2 - this.xBuffer, this.y);
     vertex(this.x - this.w / 2 - this.xBuffer, this.y - this.h - this.yBuffer);
