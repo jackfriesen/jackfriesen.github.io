@@ -14,19 +14,22 @@
 //
 //try different custom font to see if that slows it down
 
-
+//level related variables
 let level = 0;
 let respawning = true;
 let fade = 255;
 
-let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, hitBad, hitDoor, hitTrap; //collision checking variables
+//collision checking variables
+let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, hitBad, hitDoor, hitTrap; 
 let currPlatY, currPlatH;
+
+//environment variables
 let myFont;
 let platforms = [];
 let enemies = [];
 let enemyVertices = []; //bad guy hitbox vertices array
 let spikes = [];
-let spikeVertices = [];
+let spikeVertices = []; //spike hitbox vertices array
 let doorVertices = []; //door hitbox vertices array
 let door;
 
