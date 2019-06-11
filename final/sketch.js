@@ -2,35 +2,23 @@
 //puzzle/platformer
 
 
-//TO DO
-//
-//make level transition animation
-//in draw: if (level === 0.5)
-//
-//make a blackout effect for a tunnel level!
-//-have a 2d array that divides the screen into a grid of v small squares like 1000 x 1000 and its all small black squares.
-//make background a torchlight color and have the small black squares disappear in a ring around the hero as he moves so its like an 
-//illumination effect
-//
-//try different custom font to see if that slows it down
-
 //level related variables
 let level = 0;
 let respawning = true;
 let fade = 255;
 
 //collision checking variables
-let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, hitBad, hitDoor, hitTrap; 
+let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, hitBad, hitDoor, hitTrap;
 let currPlatY, currPlatH;
 
 //environment variables
-let myFont;
 let platforms = [];
 let enemies = [];
 let enemyVertices = []; //bad guy hitbox vertices array
 let spikes = [];
 let spikeVertices = []; //spike hitbox vertices array
 let doorVertices = []; //door hitbox vertices array
+let blocks = [];
 let door;
 
 //hero animation vars
@@ -42,12 +30,6 @@ let xVelocity = 0;
 let yVelocity = 0;
 let state = 0; // 0 = idle, 1 = right, 2 = left
 
-
-
-//load game font
-function preload() {
-  myFont = loadFont("assets/guilin.ttf");
-}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -85,7 +67,7 @@ function collisionCheck() {
   hitDoor = collideRectPoly(rectX, rectY, rectW, rectH, doorVertices);
 
   if (hitDoor) {
-    level ++;
+    level++;
     respawning = true;
   }
 
@@ -252,7 +234,6 @@ function levelOne() {
   if (respawning) {
     loadLevelOne();
     respawning = false;
-    print(respawning);
   }
 
   for (let i = 0; i < platforms.length; i++) {
@@ -263,16 +244,19 @@ function levelOne() {
 }
 
 function loadLevelOne() {
+  rectY = 20;
   rectX = 100;
-  rectY = 100;
-  xVelocity = 0;
-  yVelocity = 0;
 
   platforms = [];
+  enemies = [];
+  enemyVertices = [];
+  doorVertices = [];
+  spikes = [];
+  spikeVertices = [];
 
-  platforms.push(new Platform(50, 150, 100, 100));
+  platforms.push(new Platform(width / 20, height / 10 + 50, 100, 100));
 
-  door = new Door(400, 400);
+  door = new Door(width - 50, 100);
 }
 
 
@@ -301,6 +285,7 @@ function tutorial() {
   }
 
   door.display();
+  blocks[0].display();
 }
 
 //load tutorial environment into array
@@ -317,13 +302,15 @@ function loadTutorial() {
   platforms.push(new Platform(0, height - 35, width / 1.7, 15));
   platforms.push(new Platform(width / 1.7 + 150, height - 35, width - (width / 1.7 + 150), 15));
   platforms.push(new Platform(width / 1.3, height - 100, 200, 15));
-  platforms.push(new Platform(width / 3, height - 100, 20, 75));
+  //platforms.push(new Platform(width / 3, height - 100, 20, 75));
 
   door = new Door(width / 1.3 + 100, height - 100);
 
-  spikes.push(new Spike(width / 4 - 45, height - 35));
-  spikes.push(new Spike(width / 4 - 15, height - 35));
-  spikes.push(new Spike(width / 4 - 30, height - 35));
+  blocks.push(new MovableBlock(400, height - 35 - 40, 40, 40));
+
+  // spikes.push(new Spike(width / 4 - 45, height - 35));
+  // spikes.push(new Spike(width / 4 - 15, height - 35));
+  // spikes.push(new Spike(width / 4 - 30, height - 35));
 }
 
 //show and animate enemies on tutorial level
@@ -346,8 +333,6 @@ function instructions() {
   fill(0, fade);
   strokeWeight(3);
   textSize(30);
-  //textFont(myFont);
-  textFont("Comic Sans");
   textAlign(CENTER);
 
   //"this is you" and arrow
@@ -384,6 +369,34 @@ function instructions() {
 
 //CLASSES//
 //**************************************************************************************************************************************************************************//
+
+class MovableBlock {
+  //class properties
+  constructor(x_, y_, w_, h_) {
+    this.x = x_;
+    this.y = y_;
+    this.w = w_;
+    this.h = h_;
+  }
+
+  //Class Methods
+
+  //show block
+  display() {
+    push();
+    noStroke();
+    //big square
+    fill(0);
+    rect(this.x, this.y, this.w, this.h);
+    //smaller squares
+    fill(255, 0, 0);
+    rect(this.x + this.w / 8, this.y + this.h / 8, this.w / 4, this.h / 4);
+    rect(this.x + this.w / 8 * 5, this.y + this.h / 8, this.w / 4, this.h / 4);
+    rect(this.x + this.w / 8, this.y + this.h / 8 * 5, this.w / 4, this.h / 4);
+    rect(this.x + this.w / 8 * 5, this.y + this.h / 8 * 5, this.w / 4, this.h / 4);
+    pop();
+  }
+}
 
 //creates a single spike to kill hero
 class Spike {
@@ -537,8 +550,8 @@ class HexBadGuy {
 class Platform {
   //Constructor and Class Properties
   constructor(x_, y_, w_, h_) {
-    this.x = x_;
-    this.y = y_;
+    this.x = int(x_);
+    this.y = int(y_);
     this.w = w_;
     this.h = h_;
   }
