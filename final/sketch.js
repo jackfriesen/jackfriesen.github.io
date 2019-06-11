@@ -285,7 +285,7 @@ function tutorial() {
     tutorialLoadEnemies();
     respawning = false;
   }
-  //instructions();
+  instructions();
   tutorialEnemies();
 
   //display platforms
@@ -326,7 +326,6 @@ function loadTutorial() {
 //show and animate enemies on tutorial level
 function tutorialEnemies() {
   for (let i = 0; i < enemies.length; i++) {
-    enemies[i].move();
     enemies[i].display();
   }
 }
@@ -334,7 +333,7 @@ function tutorialEnemies() {
 //reload and initiate enemies on tutorial level
 function tutorialLoadEnemies() {
   enemies = [];
-  enemies.push(new HexBadGuy(width / 1.7 + 170, height - 35 - 32, width - 60, 40, 32));
+  enemies.push(new HexBadGuy(width / 1.7 + 170, width - 60, height - 35 - 32));
 }
 
 //displays instructions on screen for user to learn to play game
@@ -344,7 +343,8 @@ function instructions() {
   fill(0, fade);
   strokeWeight(3);
   textSize(30);
-  textFont(myFont);
+  //textFont(myFont);
+  textFont("Comic Sans");
   textAlign(CENTER);
 
   //"this is you" and arrow
@@ -431,19 +431,19 @@ class Spike {
 //makes a basic bad guy
 class HexBadGuy {
   //Constructor and Class Properties
-  constructor(xR1_, y_, xR2_) {
+  constructor(xR1_, xR2_, y_) {
     this.xRangeLeft = xR1_; //must be leftmost x value in movement range
     this.xRangeRight = xR2_; //must be rightmost x value in movement range
-    this.x = xR1_ + 10; //bad guy's variable x position
-    this.xVelocity = 3;
-    this.y = y_; //most be lower y value
+    this.x = xR1_ + 10; //initialize bad guy's variable x position
+    this.xVelocity = 3; //movement speed
+    this.y = y_; //static y pos
     this.w = 40;
     this.h = 32;
   }
 
   //Class Methods
   display() {
-    //body
+    //draw bad guy
     push();
     fill(75, 0, 130, fade);
     noStroke();
@@ -456,9 +456,8 @@ class HexBadGuy {
     vertex(this.x - 9, this.y + this.h / 2);
     endShape();
     pop();
-  }
 
-  move() {
+    //move bad guy
     if (this.x <= this.xRangeLeft) {
       this.xVelocity *= -1;
     }
@@ -468,6 +467,7 @@ class HexBadGuy {
     this.x += this.xVelocity;
   }
 
+  //returns number of vertices so that bad guy collision checker knows to check for a hexbadguy
   getVertices() {
     return 6;
   }
