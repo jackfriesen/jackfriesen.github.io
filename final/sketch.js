@@ -73,13 +73,13 @@ function collisionCheck() {
 
   //checks platform collisions
   for (let i = 0; i < platforms.length; i++) {
+
     //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
-    hitTop = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY(), platforms[i].getW(), 1);
+    hitTop = collideRectRect(rectX, rectY + yVelocity, rectW, rectH, platforms[i].getX(), platforms[i].getY(), platforms[i].getW(), 1);
     if (hitTop) {
       contactTop = true;
       currPlatY = platforms[i].getY();
     }
-
 
     //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
     hitBottom = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY() + platforms[i].getH(), platforms[i].getW(), 1);
@@ -185,6 +185,7 @@ function hero() {
     rectY = height - (height - currPlatY) + currPlatH + 1; //get height to 1px below underside of platform
     yVelocity = 0; //set velocity to 0 to apply gravity
     yVelocity += 1.7; //apply gravity
+    contactTop = false; // stops hero from glitching to top of platform
     contactBottom = false; //tell computer it isn't touching bottom of platform so it has time to fall
   }
 
@@ -246,6 +247,8 @@ function levelOne() {
 function loadLevelOne() {
   rectY = 20;
   rectX = 100;
+  xVelocity = 0;
+  yVelocity = 0;
 
   platforms = [];
   enemies = [];
@@ -284,8 +287,12 @@ function tutorial() {
     spikes[i].display();
   }
 
+  // for(let i = 0; i < blocks.length; i ++) {
+  //   blocks[i].display();
+  // }
+
   door.display();
-  blocks[0].display();
+
 }
 
 //load tutorial environment into array
@@ -302,15 +309,15 @@ function loadTutorial() {
   platforms.push(new Platform(0, height - 35, width / 1.7, 15));
   platforms.push(new Platform(width / 1.7 + 150, height - 35, width - (width / 1.7 + 150), 15));
   platforms.push(new Platform(width / 1.3, height - 100, 200, 15));
-  //platforms.push(new Platform(width / 3, height - 100, 20, 75));
+  platforms.push(new Platform(width / 3, height - 100, 20, 75));
 
   door = new Door(width / 1.3 + 100, height - 100);
 
-  blocks.push(new MovableBlock(400, height - 35 - 40, 40, 40));
+  //blocks.push(new MovableBlock(400, height - 35 - 40, 40, 40));
 
-  // spikes.push(new Spike(width / 4 - 45, height - 35));
-  // spikes.push(new Spike(width / 4 - 15, height - 35));
-  // spikes.push(new Spike(width / 4 - 30, height - 35));
+  spikes.push(new Spike(width / 4 - 45, height - 35));
+  spikes.push(new Spike(width / 4 - 15, height - 35));
+  spikes.push(new Spike(width / 4 - 30, height - 35));
 }
 
 //show and animate enemies on tutorial level
@@ -386,14 +393,14 @@ class MovableBlock {
     push();
     noStroke();
     //big square
-    fill(0);
+    fill(15);
     rect(this.x, this.y, this.w, this.h);
     //smaller squares
     fill(255, 0, 0);
-    rect(this.x + this.w / 8, this.y + this.h / 8, this.w / 4, this.h / 4);
-    rect(this.x + this.w / 8 * 5, this.y + this.h / 8, this.w / 4, this.h / 4);
-    rect(this.x + this.w / 8, this.y + this.h / 8 * 5, this.w / 4, this.h / 4);
-    rect(this.x + this.w / 8 * 5, this.y + this.h / 8 * 5, this.w / 4, this.h / 4);
+    rect(this.x + this.w / 8, this.y + this.h / 8, this.w / 8, this.h / 8);
+    rect(this.x + this.w / 8 * 6, this.y + this.h / 8, this.w / 8, this.h / 8);
+    rect(this.x + this.w / 8, this.y + this.h / 8 * 6, this.w / 8, this.h / 8);
+    rect(this.x + this.w / 8 * 6, this.y + this.h / 8 * 6, this.w / 8, this.h / 8);
     pop();
   }
 }
