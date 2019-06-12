@@ -33,7 +33,7 @@ function draw() {
 
   //animate cannon and cannonball shooting
   for (let i = 0; i < cannons.length; i++) {
-    if (count % 180 === 0) { 
+    if (count % 120 === 0) { 
       cannons[i].reload(); //add another cannonball to array
     }
     cannons[i].shoot(); //animate the cannonball and have it move across screen

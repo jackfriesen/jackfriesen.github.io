@@ -21,6 +21,13 @@ let doorVertices = []; //door hitbox vertices array
 let blocks = [];
 let door;
 
+//cannon animation vars
+let cannons = [];
+let cannonBalls = [];
+let count = 0;
+let collision;
+let cannonTimer = 0;
+
 //hero animation vars
 let jumping = true;
 let rectW = 32;
@@ -29,6 +36,8 @@ let rectX, rectY;
 let xVelocity = 0;
 let yVelocity = 0;
 let state = 0; // 0 = idle, 1 = right, 2 = left
+
+
 
 
 function setup() {
@@ -59,11 +68,8 @@ function collisionCheck() {
 
   //check collision with doors
   doorVertices = [];
-
   doorVertices.push(createVector(door.getX(), door.getY() - rectH));
   doorVertices.push(createVector(door.getX(), door.getY()));
-
-
   hitDoor = collideRectPoly(rectX, rectY, rectW, rectH, doorVertices);
 
   if (hitDoor) {
@@ -144,6 +150,14 @@ function deathCheck() {
     hitTrap = collideRectPoly(rectX, rectY, rectW, rectH, spikeVertices);
 
     if (hitTrap) {
+      respawning = true;
+    }
+  }
+
+  //hitting cannonball
+  for (let i = 0; i < cannonBalls.length; i++) {
+    collision = collideRectCircle(rectX, rectY, rectW, rectH, cannonBalls[i].getX(), cannonBalls[i].getY(), cannonBalls[i].getRadius());
+    if (collision) {
       respawning = true;
     }
   }
@@ -272,19 +286,32 @@ function loadLevelOne() {
 function tutorial() {
   if (respawning) { // only loads bad guy when reloading level so that bad guy can animate and doesnt keep being reset to start location
     loadTutorial();
-    tutorialLoadEnemies();
     respawning = false;
   }
-  instructions();
-  tutorialEnemies();
+  //instructions();
 
   //display platforms
   for (let i = 0; i < platforms.length; i++) {
     platforms[i].display();
   }
 
+  //show spikes in level
   for (let i = 0; i < spikes.length; i++) {
     spikes[i].display();
+  }
+
+  //animate cannon and cannonball shooting
+  for (let i = 0; i < cannons.length; i++) {
+
+    cannons[i].reload(); //add another cannonball to array
+    cannons[i].shoot(); //animate the cannonball and have it move across screen
+    cannons[i].display(); //show the cannon
+  }
+
+  cannonTimer++;
+
+  for (let i = 0; i < enemies.length; i++) {
+    enemies[i].display();
   }
 
   // for(let i = 0; i < blocks.length; i ++) {
@@ -301,36 +328,34 @@ function loadTutorial() {
   //initialize hero spawn location
   rectY = height - height / 4;
   rectX = width / 18;
+  yVelocity = 0;
+  contactTop = false; 
 
-  //empties platform for level reload
+  //empties arrays for level reload
   platforms = [];
+  enemies = [];
 
   //bottom floor
   platforms.push(new Platform(0, height - 35, width / 1.7, 15));
   platforms.push(new Platform(width / 1.7 + 150, height - 35, width - (width / 1.7 + 150), 15));
   platforms.push(new Platform(width / 1.3, height - 100, 200, 15));
-  platforms.push(new Platform(width / 3, height - 100, 20, 75));
+  //platforms.push(new Platform(width / 3, height - 100, 20, 75));
 
   door = new Door(width / 1.3 + 100, height - 100);
 
   //blocks.push(new MovableBlock(400, height - 35 - 40, 40, 40));
 
-  spikes.push(new Spike(width / 4 - 45, height - 35));
-  spikes.push(new Spike(width / 4 - 15, height - 35));
-  spikes.push(new Spike(width / 4 - 30, height - 35));
-}
+  cannons = [];
+  cannonBalls = [];
+  cannonTimer = 0;
 
-//show and animate enemies on tutorial level
-function tutorialEnemies() {
-  for (let i = 0; i < enemies.length; i++) {
-    enemies[i].display();
-  }
-}
+  cannons.push(new Cannon(400, 0, "S"));
 
-//reload and initiate enemies on tutorial level
-function tutorialLoadEnemies() {
-  enemies = [];
-  enemies.push(new HexBadGuy(width / 1.7 + 170, width - 60, height - 35 - 32));
+  // spikes.push(new Spike(width / 4 - 45, height - 35));
+  // spikes.push(new Spike(width / 4 - 15, height - 35));
+  // spikes.push(new Spike(width / 4 - 30, height - 35));
+
+  //enemies.push(new HexBadGuy(width / 1.7 + 170, width - 60, height - 35 - 32));
 }
 
 //displays instructions on screen for user to learn to play game
@@ -377,6 +402,118 @@ function instructions() {
 //CLASSES//
 //**************************************************************************************************************************************************************************//
 
+//cannon object
+class Cannon {
+  //Class Properties
+  constructor(x_, y_, d_) {
+    this.x = x_;
+    this.y = y_;
+    this.w = 40;
+    this.h = 40;
+    this.direction = d_;
+  }
+
+  //Class Methods
+
+  //show cannon
+
+  display() {
+    push();
+    rectMode(CENTER);
+    fill(0);
+    translate(this.x, this.y);
+    if (this.direction === "N") {
+      rotate(radians(270));
+      rect(- this.h / 2, this.h / 2, this.h, this.w);
+      rect(this. h / 8, this.h / 2, this.w / 4, this.h / 1.5);
+      
+    }
+    else if(this.direction === "S") {
+      rotate(radians(90));
+      rect(this.h / 2, - this.w / 2, this.h, this.w);
+      rect(this. h * 1.1, -this.w / 2, this.w / 4, this.h / 1.5);
+    }
+    else if (this.direction === "E") {
+      rect(0, this.h / 2, this.w, this.h);
+      rect(this.w / 1.7, this.h / 2, this.w / 4, this.h / 1.5);
+    }
+    pop();
+  }
+
+  //load another cannonball into array
+  reload() {
+    if (cannonTimer % 120 === 0) {
+      cannonBalls.push(new CannonBall(this.x + this.w / 2, this.y + this.h / 2, this.h / 1.5, this.direction));
+    }
+
+  }
+
+  //shoot cannonballs
+  shoot() {
+    for (let i = 0; i < cannonBalls.length; i++) {
+      cannonBalls[i].move();
+      cannonBalls[i].display();
+    }
+  }
+}
+
+//class for cannon balls
+class CannonBall {
+  //Class Properties
+  constructor(x_, y_, r_, d_) {
+    this.x = x_;
+    this.y = y_;
+    this.radius = r_;
+    this.direction = d_;
+  }
+
+  //Class Methods
+
+  //show cannonballs
+  display() {
+    push();
+    noStroke();
+    fill(0);
+    //fill(75, 0, 130, fade);
+    ellipse(this.x, this.y, this.radius, this.radius);
+    pop();
+
+    //gets rid of cannonball if it goes off screen
+    if (this.x > width + this.radius) {
+      cannonBalls.shift();
+    }
+  }
+
+  //move cannonball across screen
+  move() {
+    if (this.direction === "E") {
+      this.x += 3;
+    }
+    else if (this.direction === "N") {
+      this.y -= 3;
+    }
+    else if(this.direction === "S") {
+      this.y += 3;
+    }
+  }
+
+  //return circ size for collisions
+  getRadius() {
+    return this.radius;
+  }
+
+  //return x pos for collisions
+  getX() {
+    return this.x;
+  }
+
+  //return y pos for collisions
+  getY() {
+    return this.y;
+  }
+}
+
+//creates a movable block to stay on switches or reach new heights
 class MovableBlock {
   //class properties
   constructor(x_, y_, w_, h_) {
