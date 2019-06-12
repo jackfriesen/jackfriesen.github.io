@@ -8,7 +8,7 @@ let respawning = true;
 let fade = 255;
 
 //collision checking variables
-let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, hitBad, hitDoor, hitTrap;
+let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, hitBad, hitDoor, hitTrap, hitCannon;
 let currPlatY, currPlatH;
 
 //environment variables
@@ -42,6 +42,7 @@ let state = 0; // 0 = idle, 1 = right, 2 = left
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  ellipseMode(CENTER);
 }
 
 function draw() {
@@ -59,12 +60,7 @@ function draw() {
 
 //checks for collisions between hero and environs
 function collisionCheck() {
-  //loop through platforms array and check if hero is touching any platforms
-  //then update state variables based on answer. "hit" is only used locally 
-  //to change "contactTop" which is used globally. contactTop can be found in 
-  //animateHero() and is used to stop hero from falling through floor and
-  //also to make hero fall if there isnt a floor. it can also be found in
-  //keyPressed() when the up arrow is pressed to allow the hero to jump
+  
 
   //check collision with doors
   doorVertices = [];
@@ -77,7 +73,12 @@ function collisionCheck() {
     respawning = true;
   }
 
-  //checks platform collisions
+  //loop through platforms array and check if hero is touching any platforms
+  //then update state variables based on answer. "hit" is only used locally 
+  //to change "contactTop" which is used globally. contactTop can be found in 
+  //animateHero() and is used to stop hero from falling through floor and
+  //also to make hero fall if there isnt a floor. it can also be found in
+  //keyPressed() when the up arrow is pressed to allow the hero to jump
   for (let i = 0; i < platforms.length; i++) {
 
     //last value is 1 so the hitbox doesn't go too deep and the hero cannot become stuck in the wall
@@ -107,6 +108,17 @@ function collisionCheck() {
     hitRight = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX() + platforms[i].getW(), platforms[i].getY() + 2, 1, platforms[i].getH() - 2);
     if (hitRight) {
       contactRight = true;
+    }
+  }
+
+  //check cannonballs hitting platforms
+  for(let i = 0; i < cannonBalls.length; i ++) {
+    for(let j = 0; j < platforms.length; j ++) {
+     
+      hitCannon = collideRectCircle(platforms[j].getX(), platforms[j].getY(), platforms[j].getW(), platforms[j].getH(), cannonBalls[i].getX(), cannonBalls[i].getY(), cannonBalls[i].getRadius());
+      if(hitCannon) {
+        cannonBalls.splice(i, 1); //destroy cannonball if it hits a platform
+      }
     }
   }
 }
@@ -165,7 +177,7 @@ function deathCheck() {
 
 //if key released change state to 0 so nothing happens
 function keyReleased() {
-  state = 0;
+  state = 0; //stop hero from continually moving
 }
 
 //receives movement commands and changes state variable accordingly
@@ -229,10 +241,10 @@ function hero() {
   }
 
   //check if running into left side of a platform
-  if (contactLeft && contactTop === false) {
+  if (contactLeft) {
     xVelocity = 0;
     rectX -= 1;
-    jumping = true; //need this so cant run into walls and teleport to their top
+    jumping = true; //need this so cant run into walls andS teleport to their top
     contactLeft = false;
   }
 
@@ -264,12 +276,17 @@ function loadLevelOne() {
   xVelocity = 0;
   yVelocity = 0;
 
+  //reset arrays
   platforms = [];
   enemies = [];
   enemyVertices = [];
   doorVertices = [];
   spikes = [];
   spikeVertices = [];
+  //reset cannon
+  cannons = [];
+  cannonBalls = [];
+  cannonTimer = 0;
 
   platforms.push(new Platform(width / 20, height / 10 + 50, 100, 100));
 
@@ -302,16 +319,16 @@ function tutorial() {
 
   //animate cannon and cannonball shooting
   for (let i = 0; i < cannons.length; i++) {
-
     cannons[i].reload(); //add another cannonball to array
     cannons[i].shoot(); //animate the cannonball and have it move across screen
     cannons[i].display(); //show the cannon
   }
+  cannonTimer++; //add to cannon timer which decides the rate of fire for cannon
 
-  cannonTimer++;
-
+  //show enemies
   for (let i = 0; i < enemies.length; i++) {
     enemies[i].display();
+    enemies[i].move();
   }
 
   // for(let i = 0; i < blocks.length; i ++) {
@@ -331,25 +348,29 @@ function loadTutorial() {
   yVelocity = 0;
   contactTop = false; 
 
-  //empties arrays for level reload
+  //reset arrays
   platforms = [];
   enemies = [];
+  enemyVertices = [];
+  doorVertices = [];
+  spikes = [];
+  spikeVertices = [];
+  //reset cannon
+  cannons = [];
+  cannonBalls = [];
+  cannonTimer = 0;
 
   //bottom floor
   platforms.push(new Platform(0, height - 35, width / 1.7, 15));
   platforms.push(new Platform(width / 1.7 + 150, height - 35, width - (width / 1.7 + 150), 15));
   platforms.push(new Platform(width / 1.3, height - 100, 200, 15));
-  //platforms.push(new Platform(width / 3, height - 100, 20, 75));
+  platforms.push(new Platform(width / 3, height - 100, 20, 75));
 
   door = new Door(width / 1.3 + 100, height - 100);
 
   //blocks.push(new MovableBlock(400, height - 35 - 40, 40, 40));
 
-  cannons = [];
-  cannonBalls = [];
-  cannonTimer = 0;
-
-  cannons.push(new Cannon(400, 0, "S"));
+  cannons.push(new Cannon(width - 60, height - 35 - 40, "W"));
 
   // spikes.push(new Spike(width / 4 - 45, height - 35));
   // spikes.push(new Spike(width / 4 - 15, height - 35));
@@ -416,7 +437,6 @@ class Cannon {
   //Class Methods
 
   //show cannon
-
   display() {
     push();
     rectMode(CENTER);
@@ -436,6 +456,11 @@ class Cannon {
     else if (this.direction === "E") {
       rect(0, this.h / 2, this.w, this.h);
       rect(this.w / 1.7, this.h / 2, this.w / 4, this.h / 1.5);
+    }
+    else if(this.direction === "W") {
+      rotate(radians(180));
+      rect(-this.w /2, -this.h / 2, this.w, this.h);
+      rect(this.w / 7, - this.h / 2, this.w / 4, this.h / 1.5);
     }
     pop();
   }
@@ -465,6 +490,7 @@ class CannonBall {
     this.y = y_;
     this.radius = r_;
     this.direction = d_;
+    this.speed = 3;
   }
 
   //Class Methods
@@ -474,12 +500,11 @@ class CannonBall {
     push();
     noStroke();
     fill(0);
-    //fill(75, 0, 130, fade);
     ellipse(this.x, this.y, this.radius, this.radius);
     pop();
 
-    //gets rid of cannonball if it goes off screen
-    if (this.x > width + this.radius) {
+    //stop cannonball if it goes off screen
+    if (this.x > width + this.radius || this.x < 0 - this.radius || this.y > height + this.radius || this.y < 0 - this.radius) {
       cannonBalls.shift();
     }
   }
@@ -487,13 +512,16 @@ class CannonBall {
   //move cannonball across screen
   move() {
     if (this.direction === "E") {
-      this.x += 3;
+      this.x += this.speed;
     }
     else if (this.direction === "N") {
-      this.y -= 3;
+      this.y -= this.speed;
     }
     else if(this.direction === "S") {
-      this.y += 3;
+      this.y += this.speed;
+    }
+    else if(this.direction === "W") {
+      this.x -= this.speed;
     }
   }
 
@@ -617,7 +645,11 @@ class HexBadGuy {
     endShape();
     pop();
 
-    //move bad guy
+    
+  }
+
+  //move bad guy
+  move() {
     if (this.x <= this.xRangeLeft) {
       this.xVelocity *= -1;
     }
