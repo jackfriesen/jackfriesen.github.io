@@ -1,45 +1,37 @@
 // Illumination testing
 
-// const NUM_ROWS;
-// const NUM_COLS;
-let NUM_COLS = 10;
-let NUM_ROWS = 10;
+const  NUM_COLS = 50;
+const NUM_ROWS = 50;
 
 let hiding = false;
 let squares = [];
-let tempSquares = []; //okay hold up. how do i create like 1000 rows in this array? 
-let collision;
+let tempSquares = []; 
+let illuminationCollision;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
+  
   for (let y = 0; y < NUM_ROWS; y++) {
+    tempSquares = [];
     for (let x = 0; x < NUM_COLS; x ++) {
       tempSquares.push(new Square(x * width / NUM_COLS, y * height / NUM_ROWS, width / NUM_COLS, height / NUM_ROWS));
-      //print(y * height / NUM_ROWS);
-      squares.push(tempSquares);
     }
+    squares.push(tempSquares);
   }
-  //print(squares);
+  print(squares);
 }
 
 function draw() {
   background(255);
 
-  fill(255, 0, 0);
-  rect(width / 2 - 50, height / 2 - 50, 100, 100);
-
-  push();
-  noFill();
-  rect(mouseX, mouseY, 10, 10);
-  pop();
 
   for(let y = 0; y < squares.length; y ++) {
-    for(let x = 0; x < squares.length; x++) {
-      collision = collideRectRect(mouseX, mouseY, 10, 10, squares[y][x].getX(), squares[y][x].getY(), squares[y][x].getW(), squares[y][x].getH());
-      if(collision) {
-        print(collision);
+    for(let x = 0; x < NUM_COLS; x++) {
+      illuminationCollision = collideRectRect(mouseX, mouseY, 10, 10, squares[y][x].getX(), squares[y][x].getY(), squares[y][x].getW(), squares[y][x].getH());
+      if(illuminationCollision) {
         squares[y][x].hide();
+        squares[y + 1][x].hide();
       }
       else {
         squares[y][x].unHide();
@@ -49,7 +41,7 @@ function draw() {
   
 
   for(let y = 0; y < squares.length; y ++ ) {
-    for(let x = 0; x < squares.length; x ++) {
+    for(let x = 0; x < NUM_COLS; x ++) {
       squares[y][x].display();
     }
   }
@@ -68,8 +60,7 @@ class Square {
   display() {
     if (this.hiding === false) {
       push();
-      noStroke();
-      this.illuminate = 255;
+      strokeWeight(1);
       fill(0, this.illuminate);
       rect(this.x, this.y, this.w, this.h);
       pop();
@@ -83,6 +74,7 @@ class Square {
   }
 
   unHide() {
+    this.illuminate = 255;
     this.hiding = false;
   }
 

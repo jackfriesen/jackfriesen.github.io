@@ -3,7 +3,7 @@
 
 
 //level related variables
-let level = 0;
+let level = 2;
 let respawning = true;
 let fade = 255;
 
@@ -37,7 +37,13 @@ let xVelocity = 0;
 let yVelocity = 0;
 let state = 0; // 0 = idle, 1 = right, 2 = left
 
-
+//illumination vars
+const NUM_COLS = 40;
+const NUM_ROWS = 40;
+let hiding = false;
+let squares = [];
+let tempSquares = [];
+let illuminationCollision;
 
 
 function setup() {
@@ -46,21 +52,25 @@ function setup() {
 }
 
 function draw() {
-  background(255);
+  background(255, 255, 0);
+  hero();
   if (level === 0) {
     tutorial();
   }
   if (level === 1) {
     levelOne();
   }
-  hero();
+  if (level === 2) {
+    levelTwo();
+  }
+
   deathCheck();
   collisionCheck();
 }
 
 //checks for collisions between hero and environs
 function collisionCheck() {
-  
+
 
   //check collision with doors
   doorVertices = [];
@@ -112,11 +122,11 @@ function collisionCheck() {
   }
 
   //check cannonballs hitting platforms
-  for(let i = 0; i < cannonBalls.length; i ++) {
-    for(let j = 0; j < platforms.length; j ++) {
-     
+  for (let i = 0; i < cannonBalls.length; i++) {
+    for (let j = 0; j < platforms.length; j++) {
+
       hitCannon = collideRectCircle(platforms[j].getX(), platforms[j].getY(), platforms[j].getW(), platforms[j].getH(), cannonBalls[i].getX(), cannonBalls[i].getY(), cannonBalls[i].getRadius());
-      if(hitCannon) {
+      if (hitCannon) {
         cannonBalls.splice(i, 1); //destroy cannonball if it hits a platform
       }
     }
@@ -292,7 +302,95 @@ function loadLevelOne() {
 
   platforms.push(new Platform(width / 20, height / 10 + 50, 100, 100));
 
-  door = new Door(width - 50, 100);
+  door = new Door(width / 18, height / 10);
+}
+
+//show level two
+function levelTwo() {
+  if (respawning) {
+    loadLevelTwo();
+    respawning = false;
+  }
+
+  for (let i = 0; i < platforms.length; i++) {
+    platforms[i].display();
+  }
+
+  door.display();
+
+  //make all squares black
+  for (let y = 0; y < squares.length; y++) {
+    for (let x = 0; x < NUM_COLS; x++) {
+      squares[y][x].unHide();
+    }
+  }
+
+
+  //hide squares closer to hero
+  for (let y = 0; y < squares.length; y++) {
+    for (let x = 0; x < NUM_COLS; x++) {
+      illuminationCollision = collideRectRect(rectX, rectY, rectW, rectH, squares[y][x].getX(), squares[y][x].getY(), squares[y][x].getW(), squares[y][x].getH());
+      if (illuminationCollision) {
+        squares[y][x].hide();
+        squares[y + 1][x].hide();
+        squares[y + 2][x].hide();
+        squares[y + 1][x - 1].hide();
+        squares[y - 1][x - 1].hide();
+        squares[y - 1][x].hide();
+        squares[y + 2][x - 1].hide();
+        squares[y][x + 1].hide();
+        squares[y + 1][x + 1].hide();
+        squares[y - 1][x + 1].hide();
+        squares[y + 2][x + 1].hide();
+        squares[y + 1][x - 2].hide();
+        squares[y - 1][x - 2].hide();
+        squares[y + 2][x - 2].hide();
+        squares[y][x + 2].hide();
+        squares[y + 1][x + 2].hide();
+        squares[y - 1][x + 2].hide();
+        squares[y + 2][x + 2].hide();
+      }
+    }
+  }
+
+  //show squares
+  for (let y = 0; y < squares.length; y++) {
+    for (let x = 0; x < NUM_COLS; x++) {
+      squares[y][x].display();
+    }
+  }
+}
+
+//load level two
+function loadLevelTwo() {
+  rectY = 20;
+  rectX = 100;
+  xVelocity = 0;
+  yVelocity = 0;
+
+  //reset arrays
+  platforms = [];
+  enemies = [];
+  enemyVertices = [];
+  doorVertices = [];
+  spikes = [];
+  spikeVertices = [];
+  //reset cannon
+  cannons = [];
+  cannonBalls = [];
+  cannonTimer = 0;
+
+  platforms.push(new Platform(0, height / 2, width, 15));
+  door = new Door(50, 100);
+
+  for (let y = 0; y < NUM_ROWS; y++) {
+    tempSquares = [];
+    for (let x = 0; x < NUM_COLS; x++) {
+      tempSquares.push(new Square(x * width / NUM_COLS, y * height / NUM_ROWS, width / NUM_COLS, height / NUM_ROWS));
+    }
+    squares.push(tempSquares);
+  }
+  print(squares);
 }
 
 
@@ -333,9 +431,11 @@ function tutorial() {
     enemies[i].move();
   }
 
-  // for(let i = 0; i < blocks.length; i ++) {
-  //   blocks[i].display();
-  // }
+  //show and animate movable blocks
+  for (let i = 0; i < blocks.length; i++) {
+    blocks[i].display();
+    blocks[i].move();
+  }
 
   door.display();
 
@@ -343,12 +443,11 @@ function tutorial() {
 
 //load tutorial environment into arrays
 function loadTutorial() {
-
   //initialize hero spawn location
   rectY = height - height / 4;
   rectX = width / 18;
   yVelocity = 0;
-  contactTop = false; 
+  contactTop = false;
 
   //reset arrays
   platforms = [];
@@ -366,13 +465,13 @@ function loadTutorial() {
   platforms.push(new Platform(0, height - 35, width / 1.7, 15));
   platforms.push(new Platform(width / 1.7 + 150, height - 35, width - (width / 1.7 + 150), 15));
   platforms.push(new Platform(width / 1.3, height - 100, 200, 15));
-  platforms.push(new Platform(width / 3, height - 100, 20, 75));
+  //platforms.push(new Platform(width / 3, height - 100, 20, 75));
 
   door = new Door(width / 1.3 + 100, height - 100);
 
-  //blocks.push(new MovableBlock(400, height - 35 - 40, 40, 40));
+  //blocks.push(new MovableBlock(400, height - 35 - 40, 40, 40, xVelocity, yVelocity));
 
-  cannons.push(new Cannon(width - 60, height - 35 - 40, "W"));
+  //cannons.push(new Cannon(width - 60, height - 35 - 40, "W"));
 
   // spikes.push(new Spike(width / 4 - 45, height - 35));
   // spikes.push(new Spike(width / 4 - 15, height - 35));
@@ -425,6 +524,56 @@ function instructions() {
 //CLASSES//
 //**************************************************************************************************************************************************************************//
 
+//square for blackout effect
+class Square {
+  constructor(x_, y_, w_, h_) {
+    this.x = x_;
+    this.y = y_;
+    this.w = w_;
+    this.h = h_;
+    this.illuminate = 255;
+    this.hiding = false;
+  }
+
+  display() {
+    if (this.hiding === false) {
+      push();
+      strokeWeight(1);
+      fill(0, this.illuminate);
+      rect(this.x, this.y, this.w, this.h);
+      pop();
+    }
+
+  }
+
+  hide() {
+    this.illuminate = 0;
+    this.hiding = true;
+  }
+
+  unHide() {
+    this.illuminate = 255;
+    this.hiding = false;
+  }
+
+  getX() {
+    return this.x;
+  }
+
+  getY() {
+    return this.y;
+  }
+
+  getW() {
+    return this.w;
+  }
+
+  getH() {
+    return this.h;
+  }
+}
+
+
 //cannon object
 class Cannon {
   //Class Properties
@@ -447,21 +596,21 @@ class Cannon {
     if (this.direction === "N") {
       rotate(radians(270));
       rect(- this.h / 2, this.h / 2, this.h, this.w);
-      rect(this. h / 8, this.h / 2, this.w / 4, this.h / 1.5);
-      
+      rect(this.h / 8, this.h / 2, this.w / 4, this.h / 1.5);
+
     }
-    else if(this.direction === "S") {
+    else if (this.direction === "S") {
       rotate(radians(90));
       rect(this.h / 2, - this.w / 2, this.h, this.w);
-      rect(this. h * 1.1, -this.w / 2, this.w / 4, this.h / 1.5);
+      rect(this.h * 1.1, -this.w / 2, this.w / 4, this.h / 1.5);
     }
     else if (this.direction === "E") {
       rect(0, this.h / 2, this.w, this.h);
       rect(this.w / 1.7, this.h / 2, this.w / 4, this.h / 1.5);
     }
-    else if(this.direction === "W") {
+    else if (this.direction === "W") {
       rotate(radians(180));
-      rect(-this.w /2, -this.h / 2, this.w, this.h);
+      rect(-this.w / 2, -this.h / 2, this.w, this.h);
       rect(this.w / 7, - this.h / 2, this.w / 4, this.h / 1.5);
     }
     pop();
@@ -519,10 +668,10 @@ class CannonBall {
     else if (this.direction === "N") {
       this.y -= this.speed;
     }
-    else if(this.direction === "S") {
+    else if (this.direction === "S") {
       this.y += this.speed;
     }
-    else if(this.direction === "W") {
+    else if (this.direction === "W") {
       this.x -= this.speed;
     }
   }
@@ -546,11 +695,13 @@ class CannonBall {
 //creates a movable block to stay on switches or reach new heights
 class MovableBlock {
   //class properties
-  constructor(x_, y_, w_, h_) {
+  constructor(x_, y_, w_, h_, xv_, yv_) {
     this.x = x_;
     this.y = y_;
     this.w = w_;
     this.h = h_;
+    this.xVelocity = xv_;
+    this.yVelocity = yv_;
   }
 
   //Class Methods
@@ -570,6 +721,30 @@ class MovableBlock {
     rect(this.x + this.w / 8 * 6, this.y + this.h / 8 * 6, this.w / 8, this.h / 8);
     pop();
   }
+
+  move() {
+    this.x += this.xVelocity;
+    this.y += this.yVelocity;
+    this.xVelocity *= 0.9;
+  }
+
+  getX() {
+    return this.x;
+  }
+
+  getY() {
+    return this.y;
+  }
+
+  getW() {
+    return this.w;
+  }
+
+  getH() {
+    return this.h;
+  }
+
+
 }
 
 //creates a single spike to kill hero
@@ -647,7 +822,7 @@ class HexBadGuy {
     endShape();
     pop();
 
-    
+
   }
 
   //move bad guy
