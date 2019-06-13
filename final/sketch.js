@@ -257,6 +257,7 @@ function hero() {
   }
 }
 
+//show level one environment
 function levelOne() {
   if (respawning) {
     loadLevelOne();
@@ -270,6 +271,7 @@ function levelOne() {
   door.display();
 }
 
+//load level one environment into arrays
 function loadLevelOne() {
   rectY = 20;
   rectX = 100;
@@ -339,7 +341,7 @@ function tutorial() {
 
 }
 
-//load tutorial environment into array
+//load tutorial environment into arrays
 function loadTutorial() {
 
   //initialize hero spawn location
