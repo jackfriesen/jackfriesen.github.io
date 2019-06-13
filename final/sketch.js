@@ -2,6 +2,35 @@
 //puzzle/platformer
 
 
+
+
+
+
+
+
+
+
+//FIX ILLUMINATION CRASH
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //level related variables
 let level = 2;
 let respawning = true;
@@ -52,7 +81,10 @@ function setup() {
 }
 
 function draw() {
-  background(255, 255, 0);
+  background(255);
+  if(level === 2) {
+    background(255, 123, 0);
+  }
   hero();
   if (level === 0) {
     tutorial();
