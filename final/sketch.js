@@ -2,35 +2,6 @@
 //puzzle/platformer
 
 
-
-
-
-
-
-
-
-
-//FIX ILLUMINATION CRASH
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //level related variables
 let level = 2;
 let respawning = true;
@@ -58,7 +29,7 @@ let collision;
 let cannonTimer = 0;
 
 //hero animation vars
-let jumping = true;
+let jumping = false;
 let rectW = 32;
 let rectH = 32;
 let rectX, rectY;
@@ -82,10 +53,7 @@ function setup() {
 
 function draw() {
   background(255);
-  if(level === 2) {
-    background(255, 123, 0);
-  }
-  hero();
+
   if (level === 0) {
     tutorial();
   }
@@ -93,6 +61,7 @@ function draw() {
     levelOne();
   }
   if (level === 2) {
+    background(255, 123, 0);
     levelTwo();
   }
 
@@ -284,33 +253,125 @@ function hero() {
 
   //check if running into left side of a platform
   if (contactLeft) {
+    print(contactLeft, contactRight);
     xVelocity = 0;
     rectX -= 1;
-    jumping = true; //need this so cant run into walls andS teleport to their top
-    contactLeft = false;
+    jumping = true; //need this so cant run into walls and teleport to their top
+
   }
 
   //check if running into left side of a platform
   if (contactRight) {
+    print(contactLeft, contactRight);
     xVelocity = 0;
     rectX += 1;
     jumping = true; //need this so cant run into walls and teleport to their top
-    contactRight = false;
+
+  }
+
+  //fixes jumping into wall and becoming stuck
+  if (contactLeft && contactRight) {
+    for (let i = 0; i < platforms.length; i++) {
+      let fixL = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX(), platforms[i].getY(), 1, platforms[i].getH());
+      let fixR = collideRectRect(rectX, rectY, rectW, rectH, platforms[i].getX() + platforms[i].getW(), platforms[i].getY(), 1, platforms[i].getH());
+      if (fixL || fixR) {
+        if (rectX - platforms[i].getW() > rectX + platforms[i].getW()) {
+          rectX = platforms[i].getX() - rectW - 1;
+        }
+        else {
+          rectX = platforms[i].getX() + platforms[i].getW() + rectW + 1;
+        }
+      }
+    }
+  }
+
+
+  contactLeft = false;
+  contactRight = false;
+
+}
+
+//blackout screen and make illumination effect
+function blackout() {
+  //make all squares black
+  for (let y = 0; y < squares.length; y++) {
+    for (let x = 0; x < NUM_COLS; x++) {
+      squares[y][x].unHide();
+    }
+  }
+
+  //hide squares closer to hero
+  for (let y = 0; y < squares.length; y++) {
+    for (let x = 0; x < NUM_COLS; x++) {
+      illuminationCollision = collideRectRect(rectX, rectY, rectW, rectH, squares[y][x].getX(), squares[y][x].getY(), squares[y][x].getW(), squares[y][x].getH());
+      if (illuminationCollision) {
+        squares[y][x].hide();
+        squares[y + 1][x].hide();
+        squares[y + 2][x].hide();
+        squares[y - 1][x].hide();
+        squares[y + 1][x - 1].hide();
+        squares[y - 1][x - 1].hide();
+        squares[y + 2][x - 1].hide();
+        squares[y][x + 1].hide();
+        squares[y + 1][x + 1].hide();
+        squares[y - 1][x + 1].hide();
+        squares[y + 2][x + 1].hide();
+        squares[y + 1][x - 2].hide();
+        squares[y - 1][x - 2].hide();
+        squares[y + 2][x - 2].hide();
+        squares[y][x + 2].hide();
+        squares[y + 1][x + 2].hide();
+        squares[y - 1][x + 2].hide();
+        squares[y + 2][x + 2].hide();
+      }
+    }
+  }
+
+  //show squares
+  for (let y = 0; y < squares.length; y++) {
+    for (let x = 0; x < NUM_COLS; x++) {
+      squares[y][x].display();
+    }
   }
 }
 
+function loadBlackout() {
+  for (let y = 0; y < NUM_ROWS; y++) {
+    tempSquares = [];
+    for (let x = 0; x < NUM_COLS; x++) {
+      tempSquares.push(new Square(x * width / NUM_COLS, y * height / NUM_ROWS, width / NUM_COLS, height / NUM_ROWS));
+    }
+    squares.push(tempSquares);
+  }
+}
+
+
+//LEVELs//
+//***************************************************************************************************************************************************************************//
+
 //show level one environment
 function levelOne() {
-  if (respawning) {
+  if (respawning) {  //reload level
     loadLevelOne();
     respawning = false;
   }
 
+  //show platforms
   for (let i = 0; i < platforms.length; i++) {
     platforms[i].display();
   }
 
+  //animate cannon and cannonball shooting
+  // for (let i = 0; i < cannons.length; i++) {
+  //   cannons[i].reload(); //add another cannonball to array
+  //   cannons[i].shoot(); //animate the cannonball and have it move across screen
+  //   cannons[i].display(); //show the cannon
+  // }
+  // cannonTimer++; //add to cannon timer which decides the rate of fire for cannon
+
+  //show and animate hero and door
   door.display();
+  hero();
 }
 
 //load level one environment into arrays
@@ -339,64 +400,28 @@ function loadLevelOne() {
 
 //show level two
 function levelTwo() {
-  if (respawning) {
+  if (respawning) { //reload level 
     loadLevelTwo();
     respawning = false;
   }
 
+  //show platforms
   for (let i = 0; i < platforms.length; i++) {
     platforms[i].display();
   }
 
+  //show and animate hero and door
   door.display();
+  hero();
 
-  //make all squares black
-  for (let y = 0; y < squares.length; y++) {
-    for (let x = 0; x < NUM_COLS; x++) {
-      squares[y][x].unHide();
-    }
-  }
-
-
-  //hide squares closer to hero
-  for (let y = 0; y < squares.length; y++) {
-    for (let x = 0; x < NUM_COLS; x++) {
-      illuminationCollision = collideRectRect(rectX, rectY, rectW, rectH, squares[y][x].getX(), squares[y][x].getY(), squares[y][x].getW(), squares[y][x].getH());
-      if (illuminationCollision) {
-        squares[y][x].hide();
-        squares[y + 1][x].hide();
-        squares[y + 2][x].hide();
-        squares[y + 1][x - 1].hide();
-        squares[y - 1][x - 1].hide();
-        squares[y - 1][x].hide();
-        squares[y + 2][x - 1].hide();
-        squares[y][x + 1].hide();
-        squares[y + 1][x + 1].hide();
-        squares[y - 1][x + 1].hide();
-        squares[y + 2][x + 1].hide();
-        squares[y + 1][x - 2].hide();
-        squares[y - 1][x - 2].hide();
-        squares[y + 2][x - 2].hide();
-        squares[y][x + 2].hide();
-        squares[y + 1][x + 2].hide();
-        squares[y - 1][x + 2].hide();
-        squares[y + 2][x + 2].hide();
-      }
-    }
-  }
-
-  //show squares
-  for (let y = 0; y < squares.length; y++) {
-    for (let x = 0; x < NUM_COLS; x++) {
-      squares[y][x].display();
-    }
-  }
+  //blackout the screen and provide illumination effect
+  //blackout();
 }
 
 //load level two
 function loadLevelTwo() {
-  rectY = 20;
-  rectX = 100;
+  rectY = 0;
+  rectX = width / NUM_COLS * 3 + 20;
   xVelocity = 0;
   yVelocity = 0;
 
@@ -412,18 +437,18 @@ function loadLevelTwo() {
   cannonBalls = [];
   cannonTimer = 0;
 
-  platforms.push(new Platform(0, height / 2, width, 15));
-  door = new Door(50, 100);
+  //buffer platforms on either side
+  platforms.push(new Platform(0, 0, width / NUM_COLS * 2 + 20, height));
+  platforms.push(new Platform(width / NUM_COLS * 37 + 20, 0, width / NUM_COLS * 38 + 20, height));
 
-  for (let y = 0; y < NUM_ROWS; y++) {
-    tempSquares = [];
-    for (let x = 0; x < NUM_COLS; x++) {
-      tempSquares.push(new Square(x * width / NUM_COLS, y * height / NUM_ROWS, width / NUM_COLS, height / NUM_ROWS));
-    }
-    squares.push(tempSquares);
-  }
-  print(squares);
+  platforms.push(new Platform(0, height / 2, width, 15));
+ 
+  door = new Door(width / NUM_COLS * 35, height / 2);
+
+  loadBlackout();
 }
+
+//***************************************************************************************************************************************************************************//
 
 
 
@@ -437,7 +462,8 @@ function tutorial() {
     loadTutorial();
     respawning = false;
   }
-  //instructions();
+  //instructions on how to play
+  instructions();
 
   //display platforms
   for (let i = 0; i < platforms.length; i++) {
@@ -448,14 +474,6 @@ function tutorial() {
   for (let i = 0; i < spikes.length; i++) {
     spikes[i].display();
   }
-
-  //animate cannon and cannonball shooting
-  for (let i = 0; i < cannons.length; i++) {
-    cannons[i].reload(); //add another cannonball to array
-    cannons[i].shoot(); //animate the cannonball and have it move across screen
-    cannons[i].display(); //show the cannon
-  }
-  cannonTimer++; //add to cannon timer which decides the rate of fire for cannon
 
   //show enemies
   for (let i = 0; i < enemies.length; i++) {
@@ -470,7 +488,7 @@ function tutorial() {
   }
 
   door.display();
-
+  hero();
 }
 
 //load tutorial environment into arrays
@@ -497,19 +515,17 @@ function loadTutorial() {
   platforms.push(new Platform(0, height - 35, width / 1.7, 15));
   platforms.push(new Platform(width / 1.7 + 150, height - 35, width - (width / 1.7 + 150), 15));
   platforms.push(new Platform(width / 1.3, height - 100, 200, 15));
-  //platforms.push(new Platform(width / 3, height - 100, 20, 75));
+  platforms.push(new Platform(width / 3, height - 100, 20, 75));
 
   door = new Door(width / 1.3 + 100, height - 100);
 
   //blocks.push(new MovableBlock(400, height - 35 - 40, 40, 40, xVelocity, yVelocity));
 
-  //cannons.push(new Cannon(width - 60, height - 35 - 40, "W"));
+  spikes.push(new Spike(width / 4 - 45, height - 35));
+  spikes.push(new Spike(width / 4 - 15, height - 35));
+  spikes.push(new Spike(width / 4 - 30, height - 35));
 
-  // spikes.push(new Spike(width / 4 - 45, height - 35));
-  // spikes.push(new Spike(width / 4 - 15, height - 35));
-  // spikes.push(new Spike(width / 4 - 30, height - 35));
-
-  //enemies.push(new HexBadGuy(width / 1.7 + 170, width - 60, height - 35 - 32));
+  enemies.push(new HexBadGuy(width / 1.7 + 170, width - 60, height - 35 - 32));
 }
 
 //displays instructions on screen for user to learn to play game
