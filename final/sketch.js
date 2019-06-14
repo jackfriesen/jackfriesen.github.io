@@ -3,7 +3,7 @@
 
 
 //level related variables
-let level = 2;
+let level = 1;
 let respawning = true;
 let fade = 255;
 
@@ -323,6 +323,30 @@ function blackout() {
         squares[y + 1][x + 2].hide();
         squares[y - 1][x + 2].hide();
         squares[y + 2][x + 2].hide();
+        if (rectY > height / 4 * 3) { //show more area on y axis when getting low down on y axis on level
+          squares[y - 3][x].hide();
+          squares[y - 3][x + 1].hide();
+          squares[y - 3][x + 2].hide();
+          squares[y - 3][x - 1].hide();
+          squares[y - 3][x - 2].hide();
+          squares[y - 4][x].hide();
+          squares[y - 4][x + 1].hide();
+          squares[y - 4][x + 2].hide();
+          squares[y - 4][x - 1].hide();
+          squares[y - 4][x - 2].hide();
+        }
+        if (rectX > width / 4 && rectY < height / 4 * 3) { // show more of 
+          squares[y][x - 3].hide();
+          squares[y - 1][x - 3].hide();
+          squares[y + 1][x - 3].hide();
+          squares[y + 2][x - 3].hide();
+        }
+        else if (rectX < width / 4 * 3 && rectY < height / 4 * 3) {
+          squares[y][x + 3].hide();
+          squares[y - 1][x + 3].hide();
+          squares[y + 1][x + 3].hide();
+          squares[y + 2][x + 3].hide();
+        }
       }
     }
   }
@@ -380,6 +404,7 @@ function loadLevelOne() {
   rectX = 100;
   xVelocity = 0;
   yVelocity = 0;
+  contactTop = false;
 
   //reset arrays
   platforms = [];
@@ -393,9 +418,9 @@ function loadLevelOne() {
   cannonBalls = [];
   cannonTimer = 0;
 
-  platforms.push(new Platform(width / 20, height / 10 + 50, 100, 100));
+  platforms.push(new Platform(width / 20, height / 10 + 50, 300, 30));
 
-  door = new Door(width / 18, height / 10);
+  door = new Door(width / 20 + 250, height / 10 + 50);
 }
 
 //show level two
@@ -410,22 +435,56 @@ function levelTwo() {
     platforms[i].display();
   }
 
+  //show enemies
+  for (let i = 0; i < enemies.length; i++) {
+    enemies[i].display();
+    enemies[i].move();
+  }
+
+  //show spikes in level
+  for (let i = 0; i < spikes.length; i++) {
+    spikes[i].display();
+  }
+
+  //animate cannon and cannonball shooting
+  for (let i = 0; i < cannons.length; i++) {
+    cannons[i].reload(); //add another cannonball to array
+    cannons[i].shoot(); //animate the cannonball and have it move across screen
+    cannons[i].display(); //show the cannon
+  }
+  cannonTimer++; //add to cannon timer which decides the rate of fire for cannon
+
+  //text on top floor
+  push();
+  textSize(25);
+  textAlign(CENTER);
+  text("Take a leap of faith...", width / NUM_COLS * 9 + 10, height / NUM_ROWS * 9 - 20);
+  pop();
+
+  push();
+  textSize(25);
+  textAlign(CENTER);
+  text("ERIC SMELLS", width / NUM_COLS * 20 + 10, height / 2 - 20);
+  pop();
+
   //show and animate hero and door
   door.display();
   hero();
 
   //blackout the screen and provide illumination effect
-  //blackout();
+  blackout();
 }
 
 //load level two
 function loadLevelTwo() {
-  rectY = 0;
-  rectX = width / NUM_COLS * 3 + 20;
+  rectY = height / NUM_ROWS * 4;
+  rectX = width / NUM_COLS * 3;
   xVelocity = 0;
   yVelocity = 0;
+  contactTop = false;
 
   //reset arrays
+  squares = [];
   platforms = [];
   enemies = [];
   enemyVertices = [];
@@ -437,13 +496,28 @@ function loadLevelTwo() {
   cannonBalls = [];
   cannonTimer = 0;
 
-  //buffer platforms on either side
+  //buffer platforms to make a frame
   platforms.push(new Platform(0, 0, width / NUM_COLS * 2 + 20, height));
   platforms.push(new Platform(width / NUM_COLS * 37 + 20, 0, width / NUM_COLS * 38 + 20, height));
+  platforms.push(new Platform(0, 0, width, height / NUM_ROWS * 2 + 20));
+  platforms.push(new Platform(0, height / NUM_ROWS * 37, width, height / NUM_ROWS * 2 + 20));
 
-  platforms.push(new Platform(0, height / 2, width, 15));
- 
-  door = new Door(width / NUM_COLS * 35, height / 2);
+  //first floor
+  platforms.push(new Platform(0, height / NUM_ROWS * 9, width / 3, 15));
+  spikes.push(new Spike(width / NUM_COLS * 5 + 10, height / NUM_ROWS * 9));
+  spikes.push(new Spike(width / NUM_COLS * 5 + 25, height / NUM_ROWS * 9));
+
+  //second floor
+  platforms.push(new Platform(width / 3 + 100, height / 2, width / 3 * 2, 15));
+  cannons.push(new Cannon(width / NUM_COLS * 36 + 20, height / 2 - 40, "W"));
+
+  //bottom floor
+  spikes.push(new Spike(width / NUM_COLS * 14, height / NUM_ROWS * 37));
+  spikes.push(new Spike(width / NUM_COLS * 14 + 15, height / NUM_ROWS * 37));
+  spikes.push(new Spike(width / NUM_COLS * 14 + 30, height / NUM_ROWS * 37));
+  enemies.push(new HexBadGuy(width / 2, width / 1.3, height / NUM_ROWS * 37 - 32));
+
+  door = new Door(width / NUM_COLS * 35, height / NUM_ROWS * 37);
 
   loadBlackout();
 }
