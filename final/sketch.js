@@ -3,7 +3,7 @@
 
 
 //level related variables
-let level = 1;
+let level = 0;
 let respawning = true;
 let fade = 255;
 
