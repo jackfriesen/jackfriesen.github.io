@@ -6,6 +6,8 @@
 let level = 0;
 let respawning = true;
 let fade = 255;
+let heroFade = 255;
+let dying = false;
 
 //collision checking variables
 let hitTop, contactTop, hitBottom, contactBottom, hitLeft, contactLeft, hitRight, contactRight, hitBad, hitDoor, hitTrap, hitCannon;
@@ -64,9 +66,27 @@ function draw() {
     background(255, 123, 0);
     levelTwo();
   }
+  if (level === 3) {
+    background(255, 123, 0);
+    levelFive();
+  }
 
   deathCheck();
+  death();
   collisionCheck();
+}
+
+function death() {
+  if(dying) {
+    xVelocity = 0;
+    yVelocity = 0;
+    heroFade -= 5;
+    if(heroFade < 0) {
+      respawning = true;
+      heroFade = 255;
+      dying = false;
+    }
+  }
 }
 
 //checks for collisions between hero and environs
@@ -157,7 +177,7 @@ function deathCheck() {
       hitBad = collideRectPoly(rectX, rectY, rectW, rectH, enemyVertices);
 
       if (hitBad) {
-        respawning = true;
+        dying = true;
       }
     }
   }
@@ -173,7 +193,7 @@ function deathCheck() {
     hitTrap = collideRectPoly(rectX, rectY, rectW, rectH, spikeVertices);
 
     if (hitTrap) {
-      respawning = true;
+      dying = true;
     }
   }
 
@@ -181,7 +201,7 @@ function deathCheck() {
   for (let i = 0; i < cannonBalls.length; i++) {
     collision = collideRectCircle(rectX, rectY, rectW, rectH, cannonBalls[i].getX(), cannonBalls[i].getY(), cannonBalls[i].getRadius());
     if (collision) {
-      respawning = true;
+      dying = true;
     }
   }
 }
@@ -200,7 +220,7 @@ function keyPressed() {
     state = 1;
   }
   //jump animation
-  if (keyCode === UP_ARROW && jumping === false) {
+  if (keyCode === UP_ARROW && jumping === false && dying === false) {
     yVelocity -= 18;
     jumping = true;
     contactTop = false; // needed to allow character to jump and not be teleported to top of platform
@@ -211,7 +231,7 @@ function keyPressed() {
 function hero() {
   //draw hero
   push();
-  fill(255, 0, 0, fade);
+  fill(255, 0, 0, heroFade);
   noStroke();
   rect(rectX, rectY, rectW, rectH);
   pop();
@@ -370,8 +390,117 @@ function loadBlackout() {
 }
 
 
-//LEVELs//
+//LEVELS//
 //***************************************************************************************************************************************************************************//
+
+//show tutorial environment
+function tutorial() {
+  if (respawning) { // only loads bad guy when reloading level so that bad guy can animate and doesnt keep being reset to start location
+    loadTutorial();
+    respawning = false;
+  }
+  //instructions on how to play
+  instructions();
+
+  //display platforms
+  for (let i = 0; i < platforms.length; i++) {
+    platforms[i].display();
+  }
+
+  //show spikes in level
+  for (let i = 0; i < spikes.length; i++) {
+    spikes[i].display();
+  }
+
+  //show enemies
+  for (let i = 0; i < enemies.length; i++) {
+    enemies[i].display();
+    enemies[i].move();
+  }
+
+  //show and animate movable blocks
+  for (let i = 0; i < blocks.length; i++) {
+    blocks[i].display();
+    blocks[i].move();
+  }
+
+  door.display();
+  hero();
+}
+
+//load tutorial environment into arrays
+function loadTutorial() {
+  //initialize hero spawn location
+  rectY = height - height / 4;
+  rectX = width / 18;
+  yVelocity = 0;
+  contactTop = false;
+  dying - false;
+
+  //reset arrays
+  platforms = [];
+  enemies = [];
+  enemyVertices = [];
+  doorVertices = [];
+  spikes = [];
+  spikeVertices = [];
+  //reset cannon
+  cannons = [];
+  cannonBalls = [];
+  cannonTimer = 0;
+
+  //bottom floor
+  platforms.push(new Platform(0, height - 35, width / 1.7, 15));
+  platforms.push(new Platform(width / 1.7 + 150, height - 35, width - (width / 1.7 + 150), 15));
+  platforms.push(new Platform(width / 1.3, height - 100, 200, 15));
+  platforms.push(new Platform(width / 3, height - 100, 20, 75));
+
+  door = new Door(width / 1.3 + 100, height - 100);
+
+  //blocks.push(new MovableBlock(400, height - 35 - 40, 40, 40, xVelocity, yVelocity));
+
+  spikes.push(new Spike(width / 4 - 45, height - 35));
+  spikes.push(new Spike(width / 4 - 15, height - 35));
+  spikes.push(new Spike(width / 4 - 30, height - 35));
+
+  enemies.push(new HexBadGuy(width / 1.7 + 170, width - 60, height - 35 - 32));
+}
+
+//displays instructions on screen for user to learn to play game
+function instructions() {
+  //instructions on bottom floor
+  push();
+  fill(0, fade);
+  strokeWeight(3);
+  textSize(30);
+  textAlign(CENTER);
+
+  //"this is you" and arrow
+  text("This is you", width / 15, height - 180);
+  line(width / 25, height - 165, width / 18, height - 115);
+  triangle(width / 20, height - 110, width / 17, height - 120, width / 17, height - 100);
+
+  //watch out for bad guys
+  text("Avoid bad guys", width / 2.1, height - 50);
+  triangle(width / 1.8 + 5, height - 57.5, width / 1.8 - 10, height - 65, width / 1.8 - 10, height - 50);
+
+
+  //enter the door
+  text("Enter for next level", width / 1.3, height - 300);
+  line(width / 1.3, height - 275, width / 1.3 + 50, height - 225);
+  triangle(width / 1.3 + 60, height - 210, width / 1.3 + 40, height - 220, width / 1.3 + 55, height - 235);
+
+  //use the arrow keys to move" and buttons
+  text("Use the arrow keys to move", width / 3, height - 180);
+  rect(width / 3 - 50, height - 240, 30, 30);
+  rect(width / 3 + 50, height - 240, 30, 30);
+  rect(width / 3, height - 280, 30, 30);
+  fill(255, fade);
+  triangle(width / 3 - 48, height - 225, width / 3 - 22, height - 238, width / 3 - 22, height - 212);
+  triangle(width / 3 + 78, height - 225, width / 3 + 52, height - 238, width / 3 + 52, height - 212);
+  triangle(width / 3 + 2, height - 252, width / 3 + 28, height - 252, width / 3 + 15, height - 278);
+  pop();
+}
 
 //show level one environment
 function levelOne() {
@@ -405,6 +534,7 @@ function loadLevelOne() {
   xVelocity = 0;
   yVelocity = 0;
   contactTop = false;
+  dying = false;
 
   //reset arrays
   platforms = [];
@@ -476,6 +606,7 @@ function loadLevelTwo() {
   xVelocity = 0;
   yVelocity = 0;
   contactTop = false;
+  dying = false;
 
   //reset arrays
   squares = [];
@@ -503,7 +634,7 @@ function loadLevelTwo() {
 
   //second floor
   platforms.push(new Platform(width / 3 + 100, height / 2, width / 3 * 2, 15));
-  cannons.push(new Cannon(width / NUM_COLS * 36 + 20, height / 2 - 40, "W"));
+  cannons.push(new Cannon(width / NUM_COLS * 36 + 20, height / 2 - 40, "W", 3, 120));
 
   //bottom floor
   spikes.push(new Spike(width / NUM_COLS * 14, height / NUM_ROWS * 37));
@@ -516,58 +647,43 @@ function loadLevelTwo() {
   loadBlackout();
 }
 
-//***************************************************************************************************************************************************************************//
-
-
-
-
-//TUTORIAL LEVEL//
-//***************************************************************************************************************************************************************************//
-
-//show tutorial environment
-function tutorial() {
-  if (respawning) { // only loads bad guy when reloading level so that bad guy can animate and doesnt keep being reset to start location
-    loadTutorial();
+function levelFive() {
+  if (respawning) { //reload level 
+    loadLevelFive();
     respawning = false;
   }
-  //instructions on how to play
-  instructions();
 
-  //display platforms
+  //show platforms
   for (let i = 0; i < platforms.length; i++) {
     platforms[i].display();
   }
 
-  //show spikes in level
-  for (let i = 0; i < spikes.length; i++) {
-    spikes[i].display();
+  //animate cannon and cannonball shooting
+  for (let i = 0; i < cannons.length; i++) {
+    cannons[i].reload(); //add another cannonball to array
+    cannons[i].shoot(); //animate the cannonball and have it move across screen
+    cannons[i].display(); //show the cannon
   }
+  cannonTimer++; //add to cannon timer which decides the rate of fire for cannon
 
-  //show enemies
-  for (let i = 0; i < enemies.length; i++) {
-    enemies[i].display();
-    enemies[i].move();
-  }
-
-  //show and animate movable blocks
-  for (let i = 0; i < blocks.length; i++) {
-    blocks[i].display();
-    blocks[i].move();
-  }
-
+  //show and animate hero and door
   door.display();
   hero();
+
+  //blackout the screen and provide illumination effect
+  blackout();
 }
 
-//load tutorial environment into arrays
-function loadTutorial() {
-  //initialize hero spawn location
-  rectY = height - height / 4;
-  rectX = width / 18;
+function loadLevelFive() {
+  rectY = height / NUM_ROWS * 30;
+  rectX = width / NUM_COLS * 3;
+  xVelocity = 0;
   yVelocity = 0;
   contactTop = false;
+  dying = false;
 
   //reset arrays
+  squares = [];
   platforms = [];
   enemies = [];
   enemyVertices = [];
@@ -579,57 +695,26 @@ function loadTutorial() {
   cannonBalls = [];
   cannonTimer = 0;
 
-  //bottom floor
-  platforms.push(new Platform(0, height - 35, width / 1.7, 15));
-  platforms.push(new Platform(width / 1.7 + 150, height - 35, width - (width / 1.7 + 150), 15));
-  platforms.push(new Platform(width / 1.3, height - 100, 200, 15));
-  platforms.push(new Platform(width / 3, height - 100, 20, 75));
+  //buffer platforms to make a frame
+  platforms.push(new Platform(0, 0, width / NUM_COLS * 2 + 20, height));
+  platforms.push(new Platform(width / NUM_COLS * 37 + 20, 0, width / NUM_COLS * 38 + 20, height));
+  platforms.push(new Platform(0, 0, width, height / NUM_ROWS * 2 + 20));
+  platforms.push(new Platform(0, height / NUM_ROWS * 37, width, height / NUM_ROWS * 2 + 20));
 
-  door = new Door(width / 1.3 + 100, height - 100);
+  cannons.push(new Cannon(width / NUM_COLS * 5, height / NUM_ROWS * 20 + 20, "S", 0.4, 60));
+  cannons.push(new Cannon(width / NUM_COLS * 8, height / NUM_ROWS * 20 + 20, "S", 0.3, 60));
+  cannons.push(new Cannon(width / NUM_COLS * 11, height / NUM_ROWS * 20 + 20, "S", 0.4, 60));
+  cannons.push(new Cannon(width / NUM_COLS * 14, height / NUM_ROWS * 20 + 20, "S", 0.5, 60));
+  cannons.push(new Cannon(width / NUM_COLS * 17, height / NUM_ROWS * 20 + 20, "S", 0.4, 60));
+  cannons.push(new Cannon(width / NUM_COLS * 20, height / NUM_ROWS * 20 + 20, "S", 0.3, 60));
+  cannons.push(new Cannon(width / NUM_COLS * 23, height / NUM_ROWS * 20 + 20, "S", 0.4, 60));
+  cannons.push(new Cannon(width / NUM_COLS * 26, height / NUM_ROWS * 20 + 20, "S", 0.5, 60));
+  cannons.push(new Cannon(width / NUM_COLS * 29, height / NUM_ROWS * 20 + 20, "S", 0.4, 60));
+  cannons.push(new Cannon(width / NUM_COLS * 32, height / NUM_ROWS * 20 + 20, "S", 0.47, 60));
 
-  //blocks.push(new MovableBlock(400, height - 35 - 40, 40, 40, xVelocity, yVelocity));
+  door = new Door(width / NUM_COLS * 36, height / NUM_ROWS * 37);
 
-  spikes.push(new Spike(width / 4 - 45, height - 35));
-  spikes.push(new Spike(width / 4 - 15, height - 35));
-  spikes.push(new Spike(width / 4 - 30, height - 35));
-
-  enemies.push(new HexBadGuy(width / 1.7 + 170, width - 60, height - 35 - 32));
-}
-
-//displays instructions on screen for user to learn to play game
-function instructions() {
-  //instructions on bottom floor
-  push();
-  fill(0, fade);
-  strokeWeight(3);
-  textSize(30);
-  textAlign(CENTER);
-
-  //"this is you" and arrow
-  text("This is you", width / 15, height - 180);
-  line(width / 25, height - 165, width / 18, height - 115);
-  triangle(width / 20, height - 110, width / 17, height - 120, width / 17, height - 100);
-
-  //watch out for bad guys
-  text("Avoid bad guys", width / 2.1, height - 50);
-  triangle(width / 1.8 + 5, height - 57.5, width / 1.8 - 10, height - 65, width / 1.8 - 10, height - 50);
-
-
-  //enter the door
-  text("Enter for next level", width / 1.3, height - 300);
-  line(width / 1.3, height - 275, width / 1.3 + 50, height - 225);
-  triangle(width / 1.3 + 60, height - 210, width / 1.3 + 40, height - 220, width / 1.3 + 55, height - 235);
-
-  //use the arrow keys to move" and buttons
-  text("Use the arrow keys to move", width / 3, height - 180);
-  rect(width / 3 - 50, height - 240, 30, 30);
-  rect(width / 3 + 50, height - 240, 30, 30);
-  rect(width / 3, height - 280, 30, 30);
-  fill(255, fade);
-  triangle(width / 3 - 48, height - 225, width / 3 - 22, height - 238, width / 3 - 22, height - 212);
-  triangle(width / 3 + 78, height - 225, width / 3 + 52, height - 238, width / 3 + 52, height - 212);
-  triangle(width / 3 + 2, height - 252, width / 3 + 28, height - 252, width / 3 + 15, height - 278);
-  pop();
+  loadBlackout();
 }
 
 //***************************************************************************************************************************************************************************//
@@ -693,12 +778,14 @@ class Square {
 //cannon object
 class Cannon {
   //Class Properties
-  constructor(x_, y_, d_) {
+  constructor(x_, y_, d_, s_, r_) {
     this.x = x_;
     this.y = y_;
     this.w = 40;
     this.h = 40;
     this.direction = d_;
+    this.speed = s_;
+    this.rateOfFire = r_;
   }
 
   //Class Methods
@@ -734,8 +821,8 @@ class Cannon {
 
   //load another cannonball into array
   reload() {
-    if (cannonTimer % 120 === 0) {
-      cannonBalls.push(new CannonBall(this.x + this.w / 2, this.y + this.h / 2, this.h / 1.5, this.direction));
+    if (cannonTimer % this.rateOfFire === 0) {
+      cannonBalls.push(new CannonBall(this.x + this.w / 2, this.y + this.h / 2, this.h / 1.5, this.direction, this.speed));
     }
 
   }
@@ -752,12 +839,12 @@ class Cannon {
 //class for cannon balls
 class CannonBall {
   //Class Properties
-  constructor(x_, y_, r_, d_) {
+  constructor(x_, y_, r_, d_, s_) {
     this.x = x_;
     this.y = y_;
     this.radius = r_;
     this.direction = d_;
-    this.speed = 3;
+    this.speed = s_;
   }
 
   //Class Methods
