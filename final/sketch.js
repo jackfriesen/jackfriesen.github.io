@@ -3,7 +3,7 @@
 
 
 //level related variables
-let level = 0;
+let level = 3;
 let respawning = true;
 let fade = 255;
 let heroFade = 255;
@@ -77,11 +77,11 @@ function draw() {
 }
 
 function death() {
-  if(dying) {
+  if (dying) {
     xVelocity = 0;
     yVelocity = 0;
     heroFade -= 5;
-    if(heroFade < 0) {
+    if (heroFade < 0) {
       respawning = true;
       heroFade = 255;
       dying = false;
@@ -514,13 +514,18 @@ function levelOne() {
     platforms[i].display();
   }
 
+  //show spikes in level
+  for (let i = 0; i < spikes.length; i++) {
+    spikes[i].display();
+  }
+
   //animate cannon and cannonball shooting
-  // for (let i = 0; i < cannons.length; i++) {
-  //   cannons[i].reload(); //add another cannonball to array
-  //   cannons[i].shoot(); //animate the cannonball and have it move across screen
-  //   cannons[i].display(); //show the cannon
-  // }
-  // cannonTimer++; //add to cannon timer which decides the rate of fire for cannon
+  for (let i = 0; i < cannons.length; i++) {
+    cannons[i].reload(); //add another cannonball to array
+    cannons[i].shoot(); //animate the cannonball and have it move across screen
+    cannons[i].display(); //show the cannon
+  }
+  cannonTimer++; //add to cannon timer which decides the rate of fire for cannon
 
   //show and animate hero and door
   door.display();
@@ -548,9 +553,47 @@ function loadLevelOne() {
   cannonBalls = [];
   cannonTimer = 0;
 
-  platforms.push(new Platform(width / 20, height / 10 + 50, 300, 30));
+  platforms.push(new Platform(width / 20, height / 6, width / 10, 15));
 
-  door = new Door(width / 20 + 250, height / 10 + 50);
+  platforms.push(new Platform(width / 6, height / 3, width / 10, 25));
+  platforms.push(new Platform(width / 6 + width / 10 - 15, height / 3 - height / 5 + 20, 15, height / 5));
+  spikes.push(new Spike(width / 6 + width / 10 - 15 + 7.5, height / 3 - height / 5 + 20));
+
+  platforms.push(new Platform(width / 20, height / 1.8, width / 10, 15));
+  spikes.push(new Spike(width / 20 + 7.5, height / 1.8));
+  spikes.push(new Spike(width / 20 + width / 10 - 7.5, height / 1.8));
+  platforms.push(new Platform(width / 5 - 50, height / 2, 15, 100));
+
+  platforms.push(new Platform(width / 5, height / 1.8, width / 15, 15));
+
+  platforms.push(new Platform(width / 3, height / 1.8, width / 15, 15));
+
+  platforms.push(new Platform(width / 2, height / 1.8, width / 15, 15));
+
+  platforms.push(new Platform(width / 1.5, height / 1.8, width / 15, 15));
+
+  platforms.push(new Platform(width / 1.2, height / 1.8, width / 15, 15));
+
+  platforms.push(new Platform(width / 1.4, height / 2.3, width / 15, 15));
+
+  platforms.push(new Platform(width / 1.15, height / 2.7, width / 15, 15));
+
+  platforms.push(new Platform(width / 1.4, height / 3.5, width / 15, 15));
+
+  platforms.push(new Platform(width / 1.15, height / 5, width / 15, 15));
+
+
+  platforms.push(new Platform(width - 65, height / 2 + 40, width - (width - 60), 15));
+  cannons.push(new Cannon(width - 50, height / 2, "W", 3, 180));
+
+  //bottom floor
+  platforms.push(new Platform(0, height - 15, width, 15));
+  for(let i = 0; i < width; i += 15) {
+    spikes.push(new Spike(i, height - 15));
+  }
+
+  platforms.push(new Platform(width - 102, 100, 102, 15));
+  door = new Door(width - 50, 100);
 }
 
 //show level two
