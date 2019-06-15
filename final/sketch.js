@@ -461,12 +461,6 @@ function levelTwo() {
   text("Take a leap of faith...", width / NUM_COLS * 9 + 10, height / NUM_ROWS * 9 - 20);
   pop();
 
-  push();
-  textSize(25);
-  textAlign(CENTER);
-  text("ERIC SMELLS", width / NUM_COLS * 20 + 10, height / 2 - 20);
-  pop();
-
   //show and animate hero and door
   door.display();
   hero();
