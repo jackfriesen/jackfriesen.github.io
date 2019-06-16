@@ -3,7 +3,7 @@
 
 
 //level related variables
-let level = 3;
+let level = 0;
 let respawning = true;
 let fade = 255;
 let heroFade = 255;
@@ -80,7 +80,7 @@ function death() {
   if (dying) {
     xVelocity = 0;
     yVelocity = 0;
-    heroFade -= 5;
+    heroFade -= 7;
     if (heroFade < 0) {
       respawning = true;
       heroFade = 255;
@@ -273,7 +273,6 @@ function hero() {
 
   //check if running into left side of a platform
   if (contactLeft) {
-    print(contactLeft, contactRight);
     xVelocity = 0;
     rectX -= 1;
     jumping = true; //need this so cant run into walls and teleport to their top
@@ -282,7 +281,6 @@ function hero() {
 
   //check if running into left side of a platform
   if (contactRight) {
-    print(contactLeft, contactRight);
     xVelocity = 0;
     rectX += 1;
     jumping = true; //need this so cant run into walls and teleport to their top
