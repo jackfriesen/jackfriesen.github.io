@@ -20,7 +20,6 @@ let enemyVertices = []; //bad guy hitbox vertices array
 let spikes = [];
 let spikeVertices = []; //spike hitbox vertices array
 let doorVertices = []; //door hitbox vertices array
-let blocks = [];
 let door;
 
 //cannon animation vars
@@ -71,9 +70,9 @@ function draw() {
     levelFive();
   }
 
+  collisionCheck();
   deathCheck();
   death();
-  collisionCheck();
 }
 
 function death() {
@@ -81,11 +80,11 @@ function death() {
     xVelocity = 0;
     yVelocity = 0;
     heroFade -= 7;
-    if (heroFade < 0) {
-      respawning = true;
-      heroFade = 255;
-      dying = false;
-    }
+  }
+  if (heroFade < 0) {
+    respawning = true;
+    heroFade = 255;
+    dying = false;
   }
 }
 
@@ -416,12 +415,6 @@ function tutorial() {
     enemies[i].move();
   }
 
-  //show and animate movable blocks
-  for (let i = 0; i < blocks.length; i++) {
-    blocks[i].display();
-    blocks[i].move();
-  }
-
   door.display();
   hero();
 }
@@ -454,8 +447,6 @@ function loadTutorial() {
   platforms.push(new Platform(width / 3, height - 100, 20, 75));
 
   door = new Door(width / 1.3 + 100, height - 100);
-
-  //blocks.push(new MovableBlock(400, height - 35 - 40, 40, 40, xVelocity, yVelocity));
 
   spikes.push(new Spike(width / 4 - 45, height - 35));
   spikes.push(new Spike(width / 4 - 15, height - 35));
@@ -815,7 +806,6 @@ class Square {
   }
 }
 
-
 //cannon object
 class Cannon {
   //Class Properties
@@ -934,61 +924,6 @@ class CannonBall {
   getY() {
     return this.y;
   }
-}
-
-//creates a movable block to stay on switches or reach new heights
-class MovableBlock {
-  //class properties
-  constructor(x_, y_, w_, h_, xv_, yv_) {
-    this.x = x_;
-    this.y = y_;
-    this.w = w_;
-    this.h = h_;
-    this.xVelocity = xv_;
-    this.yVelocity = yv_;
-  }
-
-  //Class Methods
-
-  //show block
-  display() {
-    push();
-    noStroke();
-    //big square
-    fill(15);
-    rect(this.x, this.y, this.w, this.h);
-    //smaller squares
-    fill(255, 0, 0);
-    rect(this.x + this.w / 8, this.y + this.h / 8, this.w / 8, this.h / 8);
-    rect(this.x + this.w / 8 * 6, this.y + this.h / 8, this.w / 8, this.h / 8);
-    rect(this.x + this.w / 8, this.y + this.h / 8 * 6, this.w / 8, this.h / 8);
-    rect(this.x + this.w / 8 * 6, this.y + this.h / 8 * 6, this.w / 8, this.h / 8);
-    pop();
-  }
-
-  move() {
-    this.x += this.xVelocity;
-    this.y += this.yVelocity;
-    this.xVelocity *= 0.9;
-  }
-
-  getX() {
-    return this.x;
-  }
-
-  getY() {
-    return this.y;
-  }
-
-  getW() {
-    return this.w;
-  }
-
-  getH() {
-    return this.h;
-  }
-
-
 }
 
 //creates a single spike to kill hero
