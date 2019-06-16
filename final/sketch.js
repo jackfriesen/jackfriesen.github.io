@@ -59,15 +59,15 @@ function draw() {
     tutorial();
   }
   if (level === 1) {
-    levelOne();
+    background(255, 123, 0);
+    levelFive();
   }
   if (level === 2) {
     background(255, 123, 0);
     levelTwo();
   }
   if (level === 3) {
-    background(255, 123, 0);
-    levelFive();
+    levelOne();
   }
 
   collisionCheck();
@@ -672,6 +672,7 @@ function loadLevelTwo() {
   spikes.push(new Spike(width / NUM_COLS * 14, height / NUM_ROWS * 37));
   spikes.push(new Spike(width / NUM_COLS * 14 + 15, height / NUM_ROWS * 37));
   spikes.push(new Spike(width / NUM_COLS * 14 + 30, height / NUM_ROWS * 37));
+  spikes.push(new Spike(width / NUM_COLS * 14 + 45, height / NUM_ROWS * 37));
   enemies.push(new HexBadGuy(width / 2, width / 1.3, height / NUM_ROWS * 37 - 32));
 
   door = new Door(width / NUM_COLS * 35, height / NUM_ROWS * 37);
