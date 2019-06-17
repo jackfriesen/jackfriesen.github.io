@@ -640,8 +640,8 @@ function levelTwo() {
   textSize(25);
   textAlign(CENTER);
   text("Take a leap of faith...", width / NUM_COLS * 9 + 10, height / NUM_ROWS * 9 - 20);
-  text("this is", width / NUM_COLS * 14 + 20, height / NUM_ROWS * 34);
-  text("for the faithless", width / NUM_COLS * 14 + 20, height / NUM_ROWS * 35);
+  // text("this is", width / NUM_COLS * 14 + 20, height / NUM_ROWS * 34);
+  // text("for the faithless", width / NUM_COLS * 14 + 20, height / NUM_ROWS * 35);
   pop();
 
   //show and animate hero and door
