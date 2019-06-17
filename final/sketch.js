@@ -46,35 +46,45 @@ let squares = [];
 let tempSquares = [];
 let illuminationCollision;
 
-
+//load canvas and set ellipse mode to center for collisions
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  ellipseMode(CENTER);
+  ellipseMode(CENTER); //centered for collisions
 }
 
+//play out the game
 function draw() {
-  background(255);
+  background(255); //white background unless otherwise specified
 
+  //load levels based on stage hero is on
   if (level === 0) {
     tutorial();
   }
   if (level === 1) {
-    background(255, 123, 0);
-    levelFive();
+    levelOne();
   }
   if (level === 2) {
     background(255, 123, 0);
     levelTwo();
   }
   if (level === 3) {
-    levelOne();
+    background(255, 123, 0);
+    levelThree();
+  }
+  if(level === 4) {
+    finalLevel();
+  }
+  if(level === 5) {
+    background(0);
+    win();
   }
 
-  collisionCheck();
-  deathCheck();
-  death();
+  collisionCheck(); //check for interactions between hero and environment
+  deathCheck(); //check for interactions between hero and things that kill him
+  death(); //animate hero dying
 }
 
+//animate hero dying
 function death() {
   if (dying) {
     xVelocity = 0;
@@ -376,6 +386,7 @@ function blackout() {
   }
 }
 
+//load blackout for screen
 function loadBlackout() {
   for (let y = 0; y < NUM_ROWS; y++) {
     tempSquares = [];
@@ -460,7 +471,6 @@ function instructions() {
   //instructions on bottom floor
   push();
   fill(0, fade);
-  strokeWeight(3);
   textSize(30);
   textAlign(CENTER);
 
@@ -499,7 +509,7 @@ function levelOne() {
   }
 
   //show platforms
-  for (let i = 0; i < platforms.length; i++) {
+  for (let i = 0; i < platforms.length - 1; i++) {
     platforms[i].display();
   }
 
@@ -515,6 +525,12 @@ function levelOne() {
     cannons[i].display(); //show the cannon
   }
   cannonTimer++; //add to cannon timer which decides the rate of fire for cannon
+
+  push();
+  textSize(20);
+  textAlign(CENTER);
+  text("Reach for the stars", 100, height / 10);
+  pop();
 
   //show and animate hero and door
   door.display();
@@ -583,6 +599,9 @@ function loadLevelOne() {
 
   platforms.push(new Platform(width - 102, 100, 102, 15));
   door = new Door(width - 50, 100);
+
+  //hidden easter egg platform
+  platforms.push(new Platform(width / 6 + width / 10 + 30, 100, width / 2.3, 15));
 }
 
 //show level two
@@ -621,6 +640,8 @@ function levelTwo() {
   textSize(25);
   textAlign(CENTER);
   text("Take a leap of faith...", width / NUM_COLS * 9 + 10, height / NUM_ROWS * 9 - 20);
+  text("this is", width / NUM_COLS * 14 + 20, height / NUM_ROWS * 34);
+  text("for the faithless", width / NUM_COLS * 14 + 20, height / NUM_ROWS * 35);
   pop();
 
   //show and animate hero and door
@@ -680,9 +701,10 @@ function loadLevelTwo() {
   loadBlackout();
 }
 
-function levelFive() {
+//show level three
+function levelThree() {
   if (respawning) { //reload level 
-    loadLevelFive();
+    loadLevelThree();
     respawning = false;
   }
 
@@ -699,6 +721,12 @@ function levelFive() {
   }
   cannonTimer++; //add to cannon timer which decides the rate of fire for cannon
 
+  push();
+  textSize(17);
+  textAlign(CENTER);
+  text("Heads Up!",  width / NUM_COLS * 4, height / NUM_ROWS * 33);
+  pop();
+
   //show and animate hero and door
   door.display();
   hero();
@@ -707,7 +735,8 @@ function levelFive() {
   blackout();
 }
 
-function loadLevelFive() {
+//load level three
+function loadLevelThree() {
   rectY = height / NUM_ROWS * 30;
   rectX = width / NUM_COLS * 3;
   xVelocity = 0;
@@ -748,6 +777,90 @@ function loadLevelFive() {
   door = new Door(width / NUM_COLS * 36, height / NUM_ROWS * 37);
 
   loadBlackout();
+}
+
+//show the final level
+function finalLevel() {
+  if(respawning) {
+    loadFinalLevel();
+    respawning = false;
+  }
+  door.display();
+
+  //show only a few platforms
+  platforms[0].display();
+  platforms[1].display();
+  platforms[2].display();
+
+  //show spikes
+  for(let i = 0; i < spikes.length; i ++) {
+    spikes[i].display();
+  }
+  
+  push();
+  textSize(15);
+  textStyle(BOLD);
+  text("...Leap very", 260, 170);
+  text(" faithfully this time,", 210, 190);
+  text("and you will be rewarded", 210, 210);
+  text("with the heavens", 210, 230);
+  textAlign(CENTER);
+  text("The end is in sight...", 100, 50);
+  
+  pop();
+
+  hero();
+}
+
+//load the final level
+function loadFinalLevel() {
+  rectY = 50;
+  rectX = 120;
+  xVelocity = 0;
+  yVelocity = 0;
+  contactTop = false;
+  dying = false;
+
+  //reset arrays
+  squares = [];
+  platforms = [];
+  enemies = [];
+  enemyVertices = [];
+  doorVertices = [];
+  spikes = [];
+  spikeVertices = [];
+  //reset cannon
+  cannons = [];
+  cannonBalls = [];
+  cannonTimer = 0;
+
+  platforms.push(new Platform(100, 100, 100, 100)); // starter platform
+
+  //bottom floor
+  platforms.push(new Platform(0, height - 5, width, 5));
+  for(let i = 0; i < width; i += 15) {
+    spikes.push(new Spike(i, height - 5));
+  }
+
+  platforms.push(new Platform(width - 120, 300, 100, 15)); //door platform
+  door = new Door(width - 70, 300);
+
+  //easter egg platforms
+  platforms.push(new Platform( width / 4 + 10, height / 20, width / 10, 15));
+  platforms.push(new Platform( width / 4 + 30 + width / 10, height / 5, width / 10, 15));
+  platforms.push(new Platform(width / 4 + 50 + width / 10, 300, width / 2.5, 15));
+}
+
+//show win screen
+function win() {
+  door = new Door (width / 2, height / 2); //so game doesn't crash
+  fill(255, 0, 0);
+  rect(width / 2 - 50, height / 2 - 50, 100, 100);
+  fill(255);
+  textAlign(CENTER);
+  textSize(20);
+  text("You Win!", width / 2, height / 2);
+  text("Press CTRL + R to play again!", width / 2, height / 1.5);
 }
 
 //***************************************************************************************************************************************************************************//
