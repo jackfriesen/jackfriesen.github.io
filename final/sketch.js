@@ -1,5 +1,6 @@
 // Final
 //puzzle/platformer
+//by Jack Friesen
 
 
 //level related variables
@@ -71,10 +72,10 @@ function draw() {
     background(255, 123, 0);
     levelThree();
   }
-  if(level === 4) {
+  if (level === 4) {
     finalLevel();
   }
-  if(level === 5) {
+  if (level === 5) {
     background(0);
     win();
   }
@@ -84,7 +85,7 @@ function draw() {
   death(); //animate hero dying
 }
 
-//animate hero dying
+//animate hero dying by a fade out effect
 function death() {
   if (dying) {
     xVelocity = 0;
@@ -115,9 +116,8 @@ function collisionCheck() {
 
   //loop through platforms array and check if hero is touching any platforms
   //then update state variables based on answer. "hit" is only used locally 
-  //to change "contactTop" which is used globally. contactTop can be found in 
-  //animateHero() and is used to stop hero from falling through floor and
-  //also to make hero fall if there isnt a floor. it can also be found in
+  //to change "contact" which is used globally. contact and its variants can be found in 
+  //animateHero() and is used to have the hero interact with all platforms. it can also be found in
   //keyPressed() when the up arrow is pressed to allow the hero to jump
   for (let i = 0; i < platforms.length; i++) {
 
@@ -170,24 +170,21 @@ function deathCheck() {
     respawning = true;
   }
 
-  //hitting a bad guy
+  //hitting a hex bad guy
   for (let i = 0; i < enemies.length; i++) {
-    //checking collisions with hex bad guys 
-    if (enemies[i].getVertices() === 6) { // we know its a hex bad guy because the number of vertices is 6
-      enemyVertices = [];
-      //create vectors of hexagon's x,y pairs to load into array, to coat bad guy in an invisible hitbox
-      enemyVertices.push(createVector(enemies[i].getHVX1(), enemies[i].getHVY1()));
-      enemyVertices.push(createVector(enemies[i].getHVX2(), enemies[i].getHVY2()));
-      enemyVertices.push(createVector(enemies[i].getHVX3(), enemies[i].getHVY3()));
-      enemyVertices.push(createVector(enemies[i].getHVX4(), enemies[i].getHVY4()));
-      enemyVertices.push(createVector(enemies[i].getHVX5(), enemies[i].getHVY5()));
-      enemyVertices.push(createVector(enemies[i].getHVX6(), enemies[i].getHVY6()));
+    enemyVertices = [];
+    //create vectors of hexagon's x,y pairs to load into array, to coat bad guy in an invisible hitbox
+    enemyVertices.push(createVector(enemies[i].getHVX1(), enemies[i].getHVY1()));
+    enemyVertices.push(createVector(enemies[i].getHVX2(), enemies[i].getHVY2()));
+    enemyVertices.push(createVector(enemies[i].getHVX3(), enemies[i].getHVY3()));
+    enemyVertices.push(createVector(enemies[i].getHVX4(), enemies[i].getHVY4()));
+    enemyVertices.push(createVector(enemies[i].getHVX5(), enemies[i].getHVY5()));
+    enemyVertices.push(createVector(enemies[i].getHVX6(), enemies[i].getHVY6()));
 
-      hitBad = collideRectPoly(rectX, rectY, rectW, rectH, enemyVertices);
+    hitBad = collideRectPoly(rectX, rectY, rectW, rectH, enemyVertices);
 
-      if (hitBad) {
-        dying = true;
-      }
+    if (hitBad) {
+      dying = true;
     }
   }
 
@@ -223,10 +220,10 @@ function keyReleased() {
 //receives movement commands and changes state variable accordingly
 function keyPressed() {
   if (keyCode === LEFT_ARROW && !contactRight) {
-    state = 2;
+    state = 2; //move left
   }
   if (keyCode === RIGHT_ARROW && !contactLeft) {
-    state = 1;
+    state = 1; //move right
   }
   //jump animation
   if (keyCode === UP_ARROW && jumping === false && dying === false) {
@@ -312,10 +309,9 @@ function hero() {
     }
   }
 
-
+  //needed to move out of wall
   contactLeft = false;
   contactRight = false;
-
 }
 
 //blackout screen and make illumination effect
@@ -378,7 +374,7 @@ function blackout() {
     }
   }
 
-  //show squares
+  //show squares in their chosen state
   for (let y = 0; y < squares.length; y++) {
     for (let x = 0; x < NUM_COLS; x++) {
       squares[y][x].display();
@@ -388,6 +384,7 @@ function blackout() {
 
 //load blackout for screen
 function loadBlackout() {
+  //load a grid of square objects to cover screen
   for (let y = 0; y < NUM_ROWS; y++) {
     tempSquares = [];
     for (let x = 0; x < NUM_COLS; x++) {
@@ -426,6 +423,7 @@ function tutorial() {
     enemies[i].move();
   }
 
+  //show door and hero
   door.display();
   hero();
 }
@@ -593,7 +591,7 @@ function loadLevelOne() {
 
   //bottom floor
   platforms.push(new Platform(0, height - 15, width, 15));
-  for(let i = 0; i < width; i += 15) {
+  for (let i = 0; i < width; i += 15) {
     spikes.push(new Spike(i, height - 15));
   }
 
@@ -724,7 +722,7 @@ function levelThree() {
   push();
   textSize(17);
   textAlign(CENTER);
-  text("Heads Up!",  width / NUM_COLS * 4, height / NUM_ROWS * 33);
+  text("Heads Up!", width / NUM_COLS * 4, height / NUM_ROWS * 33);
   pop();
 
   //show and animate hero and door
@@ -781,7 +779,7 @@ function loadLevelThree() {
 
 //show the final level
 function finalLevel() {
-  if(respawning) {
+  if (respawning) {
     loadFinalLevel();
     respawning = false;
   }
@@ -793,10 +791,10 @@ function finalLevel() {
   platforms[2].display();
 
   //show spikes
-  for(let i = 0; i < spikes.length; i ++) {
+  for (let i = 0; i < spikes.length; i++) {
     spikes[i].display();
   }
-  
+
   push();
   textSize(15);
   textStyle(BOLD);
@@ -806,7 +804,6 @@ function finalLevel() {
   text("with the heavens", 210, 230);
   textAlign(CENTER);
   text("The end is in sight...", 100, 50);
-  
   pop();
 
   hero();
@@ -838,7 +835,7 @@ function loadFinalLevel() {
 
   //bottom floor
   platforms.push(new Platform(0, height - 5, width, 5));
-  for(let i = 0; i < width; i += 15) {
+  for (let i = 0; i < width; i += 15) {
     spikes.push(new Spike(i, height - 5));
   }
 
@@ -846,14 +843,14 @@ function loadFinalLevel() {
   door = new Door(width - 70, 300);
 
   //easter egg platforms
-  platforms.push(new Platform( width / 4 + 10, height / 20, width / 10, 15));
-  platforms.push(new Platform( width / 4 + 30 + width / 10, height / 5, width / 10, 15));
+  platforms.push(new Platform(width / 4 + 10, height / 20, width / 10, 15));
+  platforms.push(new Platform(width / 4 + 30 + width / 10, height / 5, width / 10, 15));
   platforms.push(new Platform(width / 4 + 50 + width / 10, 300, width / 2.5, 15));
 }
 
 //show win screen
 function win() {
-  door = new Door (width / 2, height / 2); //so game doesn't crash
+  door = new Door(width / 2, height / 2); //so game doesn't crash
   fill(255, 0, 0);
   rect(width / 2 - 50, height / 2 - 50, 100, 100);
   fill(255);
@@ -893,11 +890,13 @@ class Square {
 
   }
 
+  //be able to see through square
   hide() {
     this.illuminate = 0;
     this.hiding = true;
   }
 
+  //show square as black
   unHide() {
     this.illuminate = 255;
     this.hiding = false;
@@ -1060,7 +1059,8 @@ class Spike {
     pop();
   }
 
-  //return left vertex x
+  //below class methods return left, top, then right vertex x and y positions
+
   getTVX1() {
     return this.x - this.w / 2;
   }
@@ -1114,8 +1114,6 @@ class HexBadGuy {
     vertex(this.x - 9, this.y + this.h / 2);
     endShape();
     pop();
-
-
   }
 
   //move bad guy
@@ -1129,40 +1127,29 @@ class HexBadGuy {
     this.x += this.xVelocity;
   }
 
-  //returns number of vertices so that bad guy collision checker knows to check for a hexbadguy
-  getVertices() {
-    return 6;
-  }
-
   //CLASS METHODS BELOW return vertices locations for collision check
   //starting with top left rect corner and working clockwise
 
-  //get the top left square vertex (SV) x pos
   getHVX1() {
     return this.x;
   }
 
-  //get the top left square vertex (SV) y pos
   getHVY1() {
     return this.y;
   }
 
-  //get top right square vertex (SV) x pos
   getHVX2() {
     return this.x + this.w;
   }
 
-  //get top right square vertex (SV) y pos
   getHVY2() {
     return this.y;
   }
 
-  //get the right triangle's vertex (TV) x pos that doesnt contact rect
   getHVX3() {
     return this.x + this.w + 10;
   }
 
-  //get the right triangle's vertex (TV) y pos that doesnt contact rect
   getHVY3() {
     return this.y + this.h / 2;
   }
@@ -1259,6 +1246,7 @@ class Door {
     endShape();
     pop();
 
+    //red flashing effect
     if (this.count < 150) {
       this.countSpeed *= -1;
     }
