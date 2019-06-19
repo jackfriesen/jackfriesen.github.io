@@ -141,7 +141,7 @@ function drawFox(xPos, yPos) {
       state = 2;
     }
     else if (yPos > height - 100) { //moving off bottom
-      state = 3;
+      state = 0;
     }
     else { //move randomly
       if (counter % 60 === 0) {
