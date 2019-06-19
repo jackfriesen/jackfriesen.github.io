@@ -150,7 +150,7 @@ function drawFox(xPos, yPos) {
     }
 
     //change size
-    if (scaler > 1.5 || scaler < 0.5) {
+    if (scaler >= 1.5 || scaler <= 0.5) {
       scalerCount *= -1;
     }
     scaler += scalerCount;
