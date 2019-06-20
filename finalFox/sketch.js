@@ -156,6 +156,7 @@ function drawFox(xPos, yPos) {
     scaler += scalerCount;
   }
   else { //normal color
+    scaler = 1; //reset size
     noTint(); //reset fox color
   }
 
