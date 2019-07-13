@@ -7,6 +7,6 @@ function setup() {
 
 function draw() {
   background(0);
-  fill(255);
-  rect(accelerationX, height / 2, 50, 50);
+  // fill(255);
+  // rect(accelerationX, height / 2, 50, 50);
 }
