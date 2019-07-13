@@ -4,12 +4,14 @@
 //
 //load extra images
 //- pipes is array for pipes & pipeImages is for rectangles
+//
+//make an easy and hard mode (easy can utilize this line of code: this.velocity *= 0.9;)
 
 let bird;
 let birdImages = [];
 let birdCounter = 0;
 let pipeImages = [];
-let pipes = [];
+//let pipes = [];
 
 
 //load images
@@ -19,10 +21,10 @@ function preload() {
     birdImages.push(loadImage("assets/Bird" + i + ".png"));
   }
 
-  //load pipes
-  for(let j = 1; j < 6; j++) {
-    pipes.push(loadImage("assets/pipes" + j + ".png"));
-  }
+  // //load pipes
+  // for(let j = 1; j < 6; j++) {
+  //   pipes.push(loadImage("assets/pipes" + j + ".png"));
+  // }
 }
 
 function setup() {
@@ -49,7 +51,7 @@ function draw() {
 //check if spacebar is pressed (32 = spacebar keycode) and lift
 //bird and cycle through costumes
 function keyPressed() {
-  if (key === " ") {
+  if (keyCode === 74) {
     bird.up();
 
     birdCounter++;
@@ -60,16 +62,8 @@ function keyPressed() {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
+//CLASSES//
+//*****************************************************************************************************************************************//
 
 //make a bird
 class Bird {
@@ -91,7 +85,7 @@ class Bird {
 
   update() {
     this.velocity += this.gravity;
-    //  this.velocity *= 0.9;
+    //this.velocity *= 0.9; //gives user a slower velocity and makes it easier
     this.y += this.velocity;
 
     if (this.y > height) {
@@ -131,3 +125,5 @@ class Pipe {
     this.x -= this.speed;
   }
 }
+
+//*****************************************************************************************************************************************//
