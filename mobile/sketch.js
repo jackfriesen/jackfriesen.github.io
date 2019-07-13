@@ -13,6 +13,7 @@ function setup() {
 function draw() {
   background(0);
   fill(255);
+  text("bla", 100, 100);
   text(accelerationX, width / 2, height / 2);
   accelerationX = 0;
   if(accelerationX > 0) {
