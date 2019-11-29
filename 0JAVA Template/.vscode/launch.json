@@ -5,17 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch localhost",
-            "type": "chrome",
+            "type": "java",
+            "name": "CodeLens (Launch) - QuickStart",
             "request": "launch",
-            "webRoot": "${workspaceFolder}",
-            "url": "http://127.0.0.1:5500/",
+            "mainClass": "Main"
         },
         {
-            "type": "chrome",
+            "type": "java",
+            "name": "Debug (Launch) - Current File",
             "request": "launch",
-            "name": "Launch index.html",
-            "file": "${workspaceFolder}/index.html"
+            "mainClass": "${file}"
         }
     ]
 }
